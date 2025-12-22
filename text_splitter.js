@@ -1,9 +1,10 @@
 let loadedFontName = 'sans-serif';
-
 let currentCharIndex = 0;
 let previewInterval = null;
+let splitterTags = [];
 
 function initTextSplitter() {
+    renderTags();
     updateSplitterPreview();
     startPreviewCycle();
 }
@@ -11,12 +12,11 @@ function initTextSplitter() {
 function startPreviewCycle() {
     if (previewInterval) clearInterval(previewInterval);
     previewInterval = setInterval(() => {
-        const text = document.getElementById('splitter_text').value.replace(/\s/g, '');
-        if (text.length > 0) {
-            currentCharIndex = (currentCharIndex + 1) % text.length;
+        if (splitterTags.length > 0) {
+            currentCharIndex = (currentCharIndex + 1) % splitterTags.length;
             updateSplitterPreview();
         }
-    }, 1000); // 1초마다 글자 전환
+    }, 1000);
 }
 
 function handleFontUpload(input) {
@@ -58,19 +58,139 @@ function syncSplitterScale(el, type) {
     updateSplitterPreview();
 }
 
+function handleSplitterKeyDown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        addSplitTag();
+    } else if (e.altKey && e.key === '1') {
+        e.preventDefault();
+        splitBy('char');
+    } else if (e.altKey && e.key === '2') {
+        e.preventDefault();
+        splitBy('word');
+    } else if (e.altKey && e.key === '3') {
+        e.preventDefault();
+        splitBy('line');
+    }
+}
+
+function addSplitTag() {
+    const textarea = document.getElementById('splitter_text');
+    const val = textarea.value.trim();
+    if (val) {
+        if (!splitterTags.includes(val)) {
+            splitterTags.push(val);
+            textarea.value = '';
+            renderTags();
+            updateSplitterPreview();
+        } else {
+            textarea.value = '';
+        }
+    }
+}
+
+function splitBy(mode) {
+    const textarea = document.getElementById('splitter_text');
+    const text = textarea.value;
+    if (!text.trim()) return;
+
+    let newTags = [];
+    if (mode === 'char') {
+        const clean = text.replace(/\s/g, '');
+        newTags = clean.split('');
+    } else if (mode === 'word') {
+        newTags = text.split(/\s+/).filter(s => s.length > 0);
+    } else if (mode === 'line') {
+        newTags = text.split(/\n/).map(s => s.trim()).filter(s => s.length > 0);
+    }
+
+    if (newTags.length > 0) {
+        const distinctNewTags = [...new Set(newTags)];
+        const uniqueNewTags = distinctNewTags.filter(tag => !splitterTags.includes(tag));
+        splitterTags = [...splitterTags, ...uniqueNewTags];
+        textarea.value = '';
+        renderTags();
+        updateSplitterPreview();
+    }
+}
+
+function removeTag(index, e) {
+    e.stopPropagation();
+    splitterTags.splice(index, 1);
+    renderTags();
+    updateSplitterPreview();
+}
+
+async function editTag(index) {
+    const oldVal = splitterTags[index];
+    const newVal = await showPrompt('Edit tag:', oldVal, true);
+    if (newVal !== null) {
+        const trimmed = newVal.trim();
+        if (trimmed) {
+            splitterTags[index] = trimmed;
+        } else {
+            splitterTags.splice(index, 1);
+        }
+        renderTags();
+        updateSplitterPreview();
+    }
+}
+
+async function clearAllTags() {
+    if (splitterTags.length === 0) return;
+    const count = splitterTags.length;
+    const confirmed = await showConfirm(`Are you sure you want to clear all ${count} texts?`);
+    if (confirmed) {
+        splitterTags = [];
+        renderTags();
+        updateSplitterPreview();
+    }
+}
+
+function renderTags() {
+    const container = document.getElementById('splitter_tags_container');
+    if (!container) return;
+
+    if (splitterTags.length === 0) {
+        container.innerHTML = '<span class="placeholder-text">No tags added yet.</span>';
+        return;
+    }
+
+    container.innerHTML = '';
+    splitterTags.forEach((tag, index) => {
+        const tagEl = document.createElement('div');
+        tagEl.className = 'text-tag';
+        tagEl.onclick = () => editTag(index);
+
+        tagEl.oncontextmenu = (e) => {
+            e.preventDefault();
+            removeTag(index, e);
+        };
+
+        const textSpan = document.createElement('span');
+        textSpan.innerText = tag;
+
+        const removeSpan = document.createElement('span');
+        removeSpan.className = 'remove-tag';
+        removeSpan.innerHTML = '&times;';
+        removeSpan.onclick = (e) => removeTag(index, e);
+
+        tagEl.appendChild(textSpan);
+        tagEl.appendChild(removeSpan);
+        container.appendChild(tagEl);
+    });
+}
+
 function updateSplitterPreview() {
-    const text = document.getElementById('splitter_text').value.replace(/\s/g, '');
     const width = parseInt(document.getElementById('splitter_width').value) || 500;
     const height = parseInt(document.getElementById('splitter_height').value) || 500;
     const color = document.getElementById('splitter_color').value;
 
-    // Read from Number inputs as primary source (allows values beyond range limits)
     const scale = parseFloat(document.getElementById('splitter_scale_num').value) || 0;
     const xOffset = parseFloat(document.getElementById('splitter_x_num').value) || 0;
     const yOffset = parseFloat(document.getElementById('splitter_y_num').value) || 0;
     const prefix = document.getElementById('splitter_prefix').value;
 
-    // Sync label
     document.getElementById('color_value_display').innerText = color.toUpperCase();
 
     const canvas = document.getElementById('splitterCanvas');
@@ -79,42 +199,38 @@ function updateSplitterPreview() {
     canvas.width = width;
     canvas.height = height;
 
-    const uniqueChars = [...new Set(text)];
-    const previewChar = uniqueChars.length > 0 ? uniqueChars[currentCharIndex % uniqueChars.length] : "";
+    const previewTag = splitterTags.length > 0 ? splitterTags[currentCharIndex % splitterTags.length] : "";
 
-    if (previewChar) {
-        document.getElementById('preview_filename').innerText = `${prefix}${previewChar}.png`;
+    if (previewTag) {
+        document.getElementById('preview_filename').innerText = `${prefix}${previewTag}.png`;
     } else {
         document.getElementById('preview_filename').innerText = "-";
     }
 
     ctx.clearRect(0, 0, width, height);
 
-    if (previewChar) {
+    if (previewTag) {
         ctx.fillStyle = color;
         ctx.font = `${height * 0.8 * scale}px "${loadedFontName}"`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        ctx.fillText(previewChar, width / 2 + xOffset, height / 2 + yOffset);
+        ctx.fillText(previewTag, width / 2 + xOffset, height / 2 + yOffset);
     }
 }
 
 async function generateSplitterZip() {
-    const text = document.getElementById('splitter_text').value;
     const width = parseInt(document.getElementById('splitter_width').value) || 500;
     const height = parseInt(document.getElementById('splitter_height').value) || 500;
     const color = document.getElementById('splitter_color').value;
-    const scale = parseFloat(document.getElementById('splitter_scale').value) || 1;
-    const xOffset = parseFloat(document.getElementById('splitter_x').value) || 0;
-    const yOffset = parseFloat(document.getElementById('splitter_y').value) || 0;
+    const scale = parseFloat(document.getElementById('splitter_scale_num').value) || 1;
+    const xOffset = parseFloat(document.getElementById('splitter_x_num').value) || 0;
+    const yOffset = parseFloat(document.getElementById('splitter_y_num').value) || 0;
     const prefix = document.getElementById('splitter_prefix').value;
     const status = document.getElementById('splitter_status');
 
-    const uniqueChars = [...new Set(text.replace(/\s/g, ''))];
-
-    if (uniqueChars.length === 0) {
-        status.innerText = "Please enter some text.";
+    if (splitterTags.length === 0) {
+        status.innerText = "Please add some tags first.";
         status.style.color = "#ef4444";
         return;
     }
@@ -122,30 +238,36 @@ async function generateSplitterZip() {
     status.innerText = "Generating ZIP...";
     status.style.color = "var(--accent-color)";
 
-    const zip = new JSZip();
-    const offCanvas = document.createElement('canvas');
-    const offCtx = offCanvas.getContext('2d');
-    offCanvas.width = width;
-    offCanvas.height = height;
+    try {
+        const zip = new JSZip();
+        const offCanvas = document.createElement('canvas');
+        const offCtx = offCanvas.getContext('2d');
+        offCanvas.width = width;
+        offCanvas.height = height;
 
-    for (const char of uniqueChars) {
-        offCtx.clearRect(0, 0, width, height);
-        offCtx.fillStyle = color;
-        offCtx.font = `${height * 0.8 * scale}px "${loadedFontName}"`;
-        offCtx.textAlign = 'center';
-        offCtx.textBaseline = 'middle';
-        offCtx.fillText(char, width / 2 + xOffset, height / 2 + yOffset);
+        for (const tag of splitterTags) {
+            offCtx.clearRect(0, 0, width, height);
+            offCtx.fillStyle = color;
+            offCtx.font = `${height * 0.8 * scale}px "${loadedFontName}"`;
+            offCtx.textAlign = 'center';
+            offCtx.textBaseline = 'middle';
+            offCtx.fillText(tag, width / 2 + xOffset, height / 2 + yOffset);
 
-        const blob = await new Promise(resolve => offCanvas.toBlob(resolve, 'image/png'));
-        zip.file(`${prefix}${char}.png`, blob);
+            const blob = await new Promise(resolve => offCanvas.toBlob(resolve, 'image/png'));
+            zip.file(`${prefix}${tag}.png`, blob);
+        }
+
+        const content = await zip.generateAsync({ type: "blob" });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = "split_texts.zip";
+        link.click();
+
+        status.innerText = "Download ready!";
+        status.style.color = "#10b981";
+    } catch (err) {
+        console.error(err);
+        status.innerText = "Error generating ZIP.";
+        status.style.color = "#ef4444";
     }
-
-    const content = await zip.generateAsync({ type: "blob" });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = "typography_images.zip";
-    link.click();
-
-    status.innerText = "Download ready!";
-    status.style.color = "#10b981";
 }
