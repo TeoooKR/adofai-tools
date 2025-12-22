@@ -20,8 +20,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
+    overflow-y: auto;
     padding-top: 20px;
+    padding-bottom: 40px;
 }
 
 .main-wrapper {
@@ -30,7 +31,7 @@ body {
     width: 90%;
     max-width: 1000px;
     align-items: stretch;
-    height: 80vh;
+    min-height: 80vh;
 }
 
 .container {
@@ -45,7 +46,6 @@ body {
     animation: fadeIn 0.8s ease-out;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 
 .visual-container {
@@ -59,7 +59,7 @@ body {
     border: 1px solid var(--border-color);
     animation: fadeIn 0.8s ease-out;
     position: relative;
-    overflow: hidden;
+    min-height: 400px;
 }
 
 h1 {
