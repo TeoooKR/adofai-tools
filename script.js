@@ -16,6 +16,9 @@ function openTab(tabName) {
         setTimeout(calculate, 10);
     } else if (tabName === 'new') {
         tabs[1].classList.add('active');
+    } else if (tabName === 'splitter') {
+        tabs[2].classList.add('active');
+        initTextSplitter();
     }
 }
 

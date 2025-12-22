@@ -13,6 +13,7 @@
 	<div class="nav-tabs">
 		<button class="nav-tab active" onclick="openTab('pseudo')">Star Calculator</button>
 		<button class="nav-tab" onclick="openTab('new')">Level Converter</button>
+		<button class="nav-tab" onclick="openTab('splitter')">Split Text into Images</button>
 	</div>
 
 
@@ -152,8 +153,7 @@
 							<br>
 							<p class="small-text">ⓘ <a href="https://adofai.gg" target="_blank">ADOFAI.gg</a>와 <a
 									href="https://tuforums.com" target="_blank">TUF</a>의 난이도 책정 기준에는 차이가 있습니다. 참고용으로만
-								사용해
-								주세요.</p>
+								사용해 주세요.</p>
 						</div>
 					</div>
 				</div>
@@ -175,22 +175,158 @@
 	</div>
 
 
-	<div id="helpModal" class="modal" onclick="closeHelp()">
-		<div class="modal-content" onclick="event.stopPropagation()">
-			<span class="close-btn" onclick="closeHelp()">&times;</span>
-			<div id="helpTextContent">text</div>
-			<div id="helpFooter"
-				style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 0.85em; opacity: 0.7; text-align: center;">
+	<div id="tab-splitter" class="tab-content"> <!-- TODO: 잘리는글자감지, 글자에 맞춰 Width 자동설정, 원하는 텍스트 묶음 프리뷰 보기, zip파일 이름설정 -->
+		<div class="main-wrapper splitter-wrapper">
+			<div class="container">
+				<div class="title-with-help">
+					<h1>Input</h1>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_text">Enter Text</label>
+					<div style="display: flex; flex-direction: column; gap: 10px;">
+						<textarea id="splitter_text" placeholder="Ex: Hello World" rows="8"
+							onkeydown="handleSplitterKeyDown(event)"></textarea>
+						<div class="split-buttons-row">
+							<button class="action-btn" onclick="addSplitTag()" title="Enter">Input</button>
+							<button class="action-btn secondary" onclick="splitBy('char')" title="Alt+1">글자 분할</button>
+							<button class="action-btn secondary" onclick="splitBy('word')" title="Alt+2">어절 분할</button>
+							<button class="action-btn secondary" onclick="splitBy('line')" title="Alt+3">줄 분할</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="input-group" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+					<div
+						style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+						<label style="margin-bottom: 0;">Input Text</label>
+						<button class="action-btn secondary" onclick="clearAllTags()"
+							style="padding: 4px; font-size: 0.75rem; width: 24px; height: 24px; min-width: unset; flex: none; border-radius: 6px; display: flex; align-items: center; justify-content: center;"
+							title="Clear all tags">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14"
+								fill="currentColor">
+								<path
+									d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+							</svg>
+						</button>
+					</div>
+					<div id="splitter_tags_container" class="tags-display-area" style="flex: 1; max-height: none;">
+						<span class="placeholder-text">No tags added yet.</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="container">
+				<div class="title-with-help">
+					<h1>Options</h1>
+				</div>
+
+				<div class="converter-row" style="display: flex; gap: 10px;">
+					<div style="flex: 1;">
+						<label for="splitter_width">Width</label>
+						<input type="number" id="splitter_width" value="500" oninput="updateSplitterPreview()">
+					</div>
+					<div style="flex: 1;">
+						<label for="splitter_height">Height</label>
+						<input type="number" id="splitter_height" value="500" oninput="updateSplitterPreview()">
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_prefix">Filename Prefix:</label>
+					<input type="text" id="splitter_prefix" placeholder="Ex: 1_" oninput="updateSplitterPreview()">
+				</div>
+
+				<div class="input-group">
+					<label>Font (.ttf)</label>
+					<div class="input-wrapper">
+						<label for="splitter_font" class="file-input-label">Select Font File</label>
+						<input type="file" id="splitter_font" accept=".ttf" style="display: none;"
+							onchange="handleFontUpload(this)">
+						<span id="font_name_display" class="small-text" style="margin-left: 10px; opacity: 0.7;">No font
+							selected</span>
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_color">Text Color</label>
+					<div style="display: flex; gap: 10px; align-items: center;">
+						<input type="color" id="splitter_color" value="#ffffff" oninput="updateSplitterPreview()"
+							style="width: 50px; padding: 0; height: 38px; border: none; background: transparent;">
+						<span id="color_value_display" class="small-text" style="opacity: 0.7;">#FFFFFF</span>
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_scale">Text Size Scale</label>
+					<div class="input-wrapper">
+						<input type="range" id="splitter_scale" min="0.1" max="5" step="0.1" value="1"
+							oninput="syncSplitterScale(this, 'range-scale')" style="flex: 1;">
+						<input type="number" id="splitter_scale_num" value="1" step="0.1"
+							oninput="syncSplitterScale(this, 'num-scale')" style="width: 50px;">
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_x">X Position</label>
+					<div class="input-wrapper">
+						<input type="range" id="splitter_x" min="-500" max="500" value="0"
+							oninput="syncSplitterScale(this, 'range-x')" style="flex: 1;">
+						<input type="number" id="splitter_x_num" value="0" oninput="syncSplitterScale(this, 'num-x')"
+							style="width: 50px;">
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_y">Y Position</label>
+					<div class="input-wrapper">
+						<input type="range" id="splitter_y" min="-500" max="500" value="0"
+							oninput="syncSplitterScale(this, 'range-y')" style="flex: 1;">
+						<input type="number" id="splitter_y_num" value="0" oninput="syncSplitterScale(this, 'num-y')"
+							style="width: 50px;">
+					</div>
+				</div>
+
+				<div class="input-group" style="margin-top: 20px;">
+					<button class="nav-tab active" style="width: 100%;" onclick="generateSplitterZip()">Generate Images
+						(.zip)</button>
+				</div>
+				<div id="splitter_status" class="small-text" style="text-align: center; margin-top: 10px;"></div>
+			</div>
+
+			<div class="visual-container preview-col"
+				style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; padding: 20px;">
+				<span class="visual-label">Preview</span>
+				<div class="preview-canvas-wrapper"
+					style="border: 2px dashed rgba(255,255,255,0.2); box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+					<canvas id="splitterCanvas"></canvas>
+				</div>
+				<div id="preview_filename" class="small-text" style="margin-top: 15px; font-family: monospace;">-</div>
 			</div>
 		</div>
 	</div>
 
+	<div id="helpModal" class="modal" onclick="closeModalOutside(event)">
+		<div class="modal-content" onclick="event.stopPropagation()">
+			<span class="close-btn" onclick="closeHelp()">&times;</span>
+			<div id="helpTextContent">text</div>
+			<div id="modalInputContainer"></div>
+			<div id="helpFooter"
+				style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 0.85em; opacity: 0.7; text-align: center;">
+			</div>
+			<div id="modalActionFooter" class="modal-footer" style="display: none;"></div>
+		</div>
+	</div>
+
 	<script>
+		let currentModalResolve = null;
+
 		function showHelp(content, footer) {
 			const modal = document.getElementById('helpModal');
 			const helpText = document.getElementById('helpTextContent');
 			const helpFooter = document.getElementById('helpFooter');
-
+			const inputContainer = document.getElementById('modalInputContainer');
+			const actionFooter = document.getElementById('modalActionFooter');
 
 			if (helpText) {
 				let formattedContent = (content || 'text')
@@ -199,6 +335,8 @@
 				helpText.innerHTML = formattedContent;
 			}
 
+			if (inputContainer) inputContainer.innerHTML = '';
+			if (actionFooter) actionFooter.style.display = 'none';
 
 			if (helpFooter) {
 				helpFooter.innerHTML = footer || '';
@@ -207,14 +345,168 @@
 
 			if (modal) modal.style.display = 'flex';
 		}
+
+		function showConfirm(message) {
+			return new Promise((resolve) => {
+				const modal = document.getElementById('helpModal');
+				const helpText = document.getElementById('helpTextContent');
+				const helpFooter = document.getElementById('helpFooter');
+				const inputContainer = document.getElementById('modalInputContainer');
+				const actionFooter = document.getElementById('modalActionFooter');
+
+				// Set text
+				helpText.innerHTML = message;
+				if (helpFooter) helpFooter.style.display = 'none';
+				if (inputContainer) inputContainer.innerHTML = '';
+
+				// Clean up previous listeners if any
+				const handleKey = (e) => {
+					if (e.key === 'Enter') {
+						e.preventDefault();
+						cleanup();
+						resolve(true);
+					} else if (e.key === 'Escape') {
+						e.preventDefault();
+						cleanup();
+						resolve(false);
+					}
+				};
+
+				const cleanup = () => {
+					document.removeEventListener('keydown', handleKey);
+					closeHelp();
+				};
+
+				// Listen for Enter key global
+				document.addEventListener('keydown', handleKey);
+
+				// Ensure cleanup if user clicks close buttons directly
+				const safeResolve = (val) => {
+					document.removeEventListener('keydown', handleKey);
+					closeHelp();
+					resolve(val);
+				};
+
+				// Set buttons
+				if (actionFooter) {
+					actionFooter.innerHTML = '';
+					actionFooter.style.display = 'flex';
+
+					const cancelBtn = document.createElement('button');
+					cancelBtn.className = 'modal-btn secondary';
+					cancelBtn.innerText = 'No';
+					cancelBtn.onclick = () => { safeResolve(false); };
+
+					const confirmBtn = document.createElement('button');
+					confirmBtn.className = 'modal-btn primary';
+					confirmBtn.innerText = 'Yes';
+					confirmBtn.onclick = () => { safeResolve(true); };
+
+					actionFooter.appendChild(cancelBtn);
+					actionFooter.appendChild(confirmBtn);
+				}
+
+				if (modal) modal.style.display = 'flex';
+			});
+		}
+
+		function showPrompt(message, defaultValue = '', isMultiline = false) {
+			return new Promise((resolve) => {
+				const modal = document.getElementById('helpModal');
+				const helpText = document.getElementById('helpTextContent');
+				const helpFooter = document.getElementById('helpFooter');
+				const inputContainer = document.getElementById('modalInputContainer');
+				const actionFooter = document.getElementById('modalActionFooter');
+
+				// Set text
+				helpText.innerHTML = message;
+				if (helpFooter) helpFooter.style.display = 'none';
+
+				// Set input
+				if (inputContainer) {
+					inputContainer.innerHTML = '';
+					let input;
+					if (isMultiline) {
+						input = document.createElement('textarea');
+						input.rows = 4;
+					} else {
+						input = document.createElement('input');
+						input.type = 'text';
+					}
+
+					input.className = 'modal-input';
+					input.value = defaultValue;
+					inputContainer.appendChild(input);
+
+					// Handle Enter key for single line only
+					if (!isMultiline) {
+						input.onkeydown = (e) => {
+							if (e.key === 'Enter') {
+								const val = input.value;
+								closeHelp();
+								resolve(val);
+							}
+						};
+					} else {
+						// Optional: Ctrl+Enter for multiline
+						input.onkeydown = (e) => {
+							if (e.key === 'Enter' && e.ctrlKey) {
+								const val = input.value;
+								closeHelp();
+								resolve(val);
+							}
+						};
+					}
+				}
+
+				// Set buttons
+				if (actionFooter) {
+					actionFooter.innerHTML = '';
+					actionFooter.style.display = 'flex';
+
+					const cancelBtn = document.createElement('button');
+					cancelBtn.className = 'modal-btn secondary';
+					cancelBtn.innerText = 'Cancel';
+					cancelBtn.onclick = () => { closeHelp(); resolve(null); };
+
+					const confirmBtn = document.createElement('button');
+					confirmBtn.className = 'modal-btn primary';
+					confirmBtn.innerText = 'OK';
+					confirmBtn.onclick = () => {
+						const el = inputContainer.querySelector('input') || inputContainer.querySelector('textarea');
+						const val = el ? el.value : '';
+						closeHelp();
+						resolve(val);
+					};
+
+					actionFooter.appendChild(cancelBtn);
+					actionFooter.appendChild(confirmBtn);
+				}
+
+				if (modal) {
+					modal.style.display = 'flex';
+					const inp = inputContainer.querySelector('input') || inputContainer.querySelector('textarea');
+					if (inp) setTimeout(() => inp.focus(), 50);
+				}
+			});
+		}
+
 		function closeHelp() {
 			const modal = document.getElementById('helpModal');
 			if (modal) modal.style.display = 'none';
 		}
+
+		function closeModalOutside(event) {
+			if (event.target.id === 'helpModal') {
+				closeHelp();
+			}
+		}
 	</script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 	<script src="star_calculator.js"></script>
 	<script src="level_converter.js"></script>
+	<script src="text_splitter.js"></script>
 	<script src="script.js"></script>
 </body>
 
