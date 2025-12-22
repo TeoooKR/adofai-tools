@@ -8,10 +8,10 @@ ADOFAI 관련 유용한 기능을 모았습니다.
 ### TUF Assets
 - [**The Universal Forums Assets**](https://github.com/T21C/T21C-assets) © 2022-2024 by [The Universal Forums](https://tuforums.com/) is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
-- Legacy
-Credit for all icons goes to TEO (@TEO_72)
-Gradient by Unofficial forums, extension by TEO (@TEO_72)
-
-- PGU
+- TUF_PGU
 Credit for PGU icons goes to Sean Lenard B. (@seanlenardb)
 Credit for gradient colors goes to Sean Lenard B. (@seanlenardb) & BadWolf (@badwolf_100)
+
+- TUF_Legacy
+Credit for all icons goes to TEO (@TEO_72)
+Gradient by Unofficial forums, extension by TEO (@TEO_72)
