@@ -13,6 +13,7 @@
 	<div class="nav-tabs">
 		<button class="nav-tab active" onclick="openTab('pseudo')">Star Calculator</button>
 		<button class="nav-tab" onclick="openTab('new')">Level Converter</button>
+		<button class="nav-tab" onclick="openTab('splitter')">Split Text into Images</button>
 	</div>
 
 
@@ -175,6 +176,104 @@
 	</div>
 
 
+	<div id="tab-splitter" class="tab-content">
+		<div class="main-wrapper">
+			<div class="container">
+				<div class="title-with-help">
+					<h1>Split Text into Images</h1>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_text">Enter Text:</label>
+					<textarea id="splitter_text" placeholder="Ex: Hello World" rows="3"
+						oninput="updateSplitterPreview()"></textarea>
+				</div>
+
+				<div class="converter-row" style="display: flex; gap: 10px;">
+					<div style="flex: 1;">
+						<label for="splitter_width">Width</label>
+						<input type="number" id="splitter_width" value="500" oninput="updateSplitterPreview()">
+					</div>
+					<div style="flex: 1;">
+						<label for="splitter_height">Height</label>
+						<input type="number" id="splitter_height" value="500" oninput="updateSplitterPreview()">
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_prefix">Filename Prefix:</label>
+					<input type="text" id="splitter_prefix" placeholder="Ex: char_" oninput="updateSplitterPreview()">
+				</div>
+
+				<div class="input-group">
+					<label>Font (.ttf)</label>
+					<div class="input-wrapper">
+						<label for="splitter_font" class="file-input-label">Select Font File</label>
+						<input type="file" id="splitter_font" accept=".ttf" style="display: none;"
+							onchange="handleFontUpload(this)">
+						<span id="font_name_display" class="small-text" style="margin-left: 10px; opacity: 0.7;">No font
+							selected</span>
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_color">Text Color</label>
+					<div style="display: flex; gap: 10px; align-items: center;">
+						<input type="color" id="splitter_color" value="#ffffff" oninput="updateSplitterPreview()"
+							style="width: 50px; padding: 0; height: 38px; border: none; background: transparent;">
+						<span id="color_value_display" class="small-text" style="opacity: 0.7;">#FFFFFF</span>
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_scale">Text Size Scale</label>
+					<div class="input-wrapper">
+						<input type="range" id="splitter_scale" min="0.1" max="5" step="0.1" value="1"
+							oninput="syncSplitterScale(this, 'range-scale')" style="flex: 1;">
+						<input type="number" id="splitter_scale_num" value="1" step="0.1"
+							oninput="syncSplitterScale(this, 'num-scale')" style="width: 50px;">
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_x">X Position</label>
+					<div class="input-wrapper">
+						<input type="range" id="splitter_x" min="-500" max="500" value="0"
+							oninput="syncSplitterScale(this, 'range-x')" style="flex: 1;">
+						<input type="number" id="splitter_x_num" value="0" oninput="syncSplitterScale(this, 'num-x')"
+							style="width: 50px;">
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_y">Y Position</label>
+					<div class="input-wrapper">
+						<input type="range" id="splitter_y" min="-500" max="500" value="0"
+							oninput="syncSplitterScale(this, 'range-y')" style="flex: 1;">
+						<input type="number" id="splitter_y_num" value="0" oninput="syncSplitterScale(this, 'num-y')"
+							style="width: 50px;">
+					</div>
+				</div>
+
+				<div class="input-group" style="margin-top: 20px;">
+					<button class="nav-tab active" style="width: 100%;" onclick="generateSplitterZip()">Generate Images
+						(.zip)</button>
+				</div>
+				<div id="splitter_status" class="small-text" style="text-align: center; margin-top: 10px;"></div>
+			</div>
+
+			<div class="visual-container"
+				style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; overflow: auto; padding: 20px;">
+				<span class="visual-label">Preview</span>
+				<div class="preview-canvas-wrapper"
+					style="border: 2px dashed rgba(255,255,255,0.2); box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+					<canvas id="splitterCanvas"></canvas>
+				</div>
+				<div id="preview_filename" class="small-text" style="margin-top: 15px; font-family: monospace;">-</div>
+			</div>
+		</div>
+	</div>
+
 	<div id="helpModal" class="modal" onclick="closeHelp()">
 		<div class="modal-content" onclick="event.stopPropagation()">
 			<span class="close-btn" onclick="closeHelp()">&times;</span>
@@ -213,8 +312,10 @@
 		}
 	</script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 	<script src="star_calculator.js"></script>
 	<script src="level_converter.js"></script>
+	<script src="text_splitter.js"></script>
 	<script src="script.js"></script>
 </body>
 
