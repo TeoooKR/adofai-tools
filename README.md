@@ -1,2 +1,17 @@
 # adofai-tools
 Useful features related to ADOFAI
+ADOFAI 관련 유용한 기능을 모았습니다.
+
+## Credits
+**`assets/` 폴더 내의 아이콘 및 에셋**들은 다음의 라이선스를 따릅니다.
+
+### TUF Assets
+- [**The Universal Forums Assets**](https://github.com/T21C/T21C-assets) © 2022-2024 by [The Universal Forums](https://tuforums.com/) is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+- Legacy
+Credit for all icons goes to TEO (@TEO_72)
+Gradient by Unofficial forums, extension by TEO (@TEO_72)
+
+- PGU
+Credit for PGU icons goes to Sean Lenard B. (@seanlenardb)
+Credit for gradient colors goes to Sean Lenard B. (@seanlenardb) & BadWolf (@badwolf_100)
