@@ -154,7 +154,7 @@ function drawVisualization(angles, isReverse) {
 
     const beatAngleElement = document.getElementById('beat-angle-display');
     if (beatAngleElement) {
-        beatAngleElement.style.color = '#ffffff'; // Pure white for clarity
+        beatAngleElement.style.color = '#ffffff';
         beatAngleElement.style.opacity = '0.95';
         beatAngleElement.style.textShadow = '0 0 30px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3)';
     }

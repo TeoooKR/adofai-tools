@@ -14,6 +14,9 @@
 		<button class="nav-tab active" onclick="openTab('pseudo')">Star Calculator</button>
 		<button class="nav-tab" onclick="openTab('new')">Level Converter</button>
 		<button class="nav-tab" onclick="openTab('splitter')">Split Text into Images</button>
+
+		<div style="flex: 1;"></div>
+
 	</div>
 
 
@@ -174,9 +177,7 @@
 		</div>
 	</div>
 
-
 	<div id="tab-splitter" class="tab-content">
-		<!-- TODO: 배경 색상 설정, 글자 색상 투명도 설정, 저장 포맷 설정, 사진 잘리는글자감지, 글자에 맞춰 Width 자동설정, 원하는 텍스트 묶음 프리뷰 보기, zip파일 이름설정 -->
 		<div class="main-wrapper splitter-wrapper">
 			<div class="container">
 				<div class="title-with-help">
@@ -224,7 +225,13 @@
 
 				<div class="converter-row" style="display: flex; gap: 10px;">
 					<div style="flex: 1;">
-						<label for="splitter_width">Width</label>
+						<label for="splitter_width"
+							style="display: flex; justify-content: space-between; align-items: center;">
+							Width
+							<button onclick="autoFitWidth()" class="action-btn secondary"
+								style="padding: 2px 6px; font-size: 0.6rem; height: auto; min-width: 0; width: auto; flex: none; margin-bottom: 0; line-height: 1.2;"
+								title="Fit width to largest text">Fit</button>
+						</label>
 						<input type="number" id="splitter_width" value="500" oninput="updateSplitterPreview()">
 					</div>
 					<div style="flex: 1;">
@@ -238,6 +245,8 @@
 					<input type="text" id="splitter_prefix" placeholder="Ex: 1_" oninput="updateSplitterPreview()">
 				</div>
 
+
+
 				<div class="input-group">
 					<label>Font (.ttf)</label>
 					<div class="input-wrapper">
@@ -250,11 +259,26 @@
 				</div>
 
 				<div class="input-group">
-					<label for="splitter_color">Text Color</label>
+					<label>Text Color & Opacity</label>
 					<div style="display: flex; gap: 10px; align-items: center;">
 						<input type="color" id="splitter_color" value="#ffffff" oninput="updateSplitterPreview()"
-							style="width: 50px; padding: 0; height: 38px; border: none; background: transparent;">
-						<span id="color_value_display" class="small-text" style="opacity: 0.7;">#FFFFFF</span>
+							style="width: 50px; padding: 0; height: 38px; border: none; background: transparent; cursor: pointer;">
+						<input type="range" id="splitter_text_opacity" min="0" max="100" value="100"
+							oninput="updateSplitterPreview()" style="flex: 1;" title="Opacity">
+						<span id="text_opacity_display" class="small-text"
+							style="width: 40px; text-align: right;">100%</span>
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label>Background Color & Opacity</label>
+					<div style="display: flex; gap: 10px; align-items: center;">
+						<input type="color" id="splitter_bg_color" value="#000000" oninput="updateSplitterPreview()"
+							style="width: 50px; padding: 0; height: 38px; border: none; background: transparent; cursor: pointer;">
+						<input type="range" id="splitter_bg_opacity" min="0" max="100" value="0"
+							oninput="updateSplitterPreview()" style="flex: 1;" title="Opacity">
+						<span id="bg_opacity_display" class="small-text"
+							style="width: 40px; text-align: right;">0%</span>
 					</div>
 				</div>
 
@@ -285,6 +309,21 @@
 							oninput="syncSplitterScale(this, 'range-y')" style="flex: 1;">
 						<input type="number" id="splitter_y_num" value="0" oninput="syncSplitterScale(this, 'num-y')"
 							style="width: 50px;">
+					</div>
+				</div>
+
+				<div class="converter-row" style="display: flex; gap: 10px;">
+					<div style="flex: 1;">
+						<label for="splitter_zip_filename">ZIP Filename</label>
+						<input type="text" id="splitter_zip_filename" placeholder="Ex: split_texts" value="split_texts">
+					</div>
+					<div style="flex: 1;">
+						<label for="splitter_format">Format</label>
+						<select id="splitter_format">
+							<option value="image/png">PNG</option>
+							<option value="image/jpeg">JPG</option>
+							<option value="image/webp">WEBP</option>
+						</select>
 					</div>
 				</div>
 
@@ -408,6 +447,54 @@
 					confirmBtn.onclick = () => { safeResolve(true); };
 
 					actionFooter.appendChild(cancelBtn);
+					actionFooter.appendChild(confirmBtn);
+				}
+
+				if (modal) modal.style.display = 'flex';
+			});
+		}
+
+		function showAlert(message) {
+			return new Promise((resolve) => {
+				const modal = document.getElementById('helpModal');
+				const helpText = document.getElementById('helpTextContent');
+				const helpFooter = document.getElementById('helpFooter');
+				const inputContainer = document.getElementById('modalInputContainer');
+				const actionFooter = document.getElementById('modalActionFooter');
+
+				// Set text
+				helpText.innerHTML = message;
+				if (helpFooter) helpFooter.style.display = 'none';
+				if (inputContainer) inputContainer.innerHTML = '';
+
+				const cleanup = () => {
+					document.removeEventListener('keydown', handleKey);
+					closeHelp();
+				};
+
+				const handleKey = (e) => {
+					if (e.key === 'Enter' || e.key === 'Escape') {
+						e.preventDefault();
+						cleanup();
+						resolve();
+					}
+				};
+
+				document.addEventListener('keydown', handleKey);
+
+				// Set buttons
+				if (actionFooter) {
+					actionFooter.innerHTML = '';
+					actionFooter.style.display = 'flex';
+
+					const confirmBtn = document.createElement('button');
+					confirmBtn.className = 'modal-btn primary';
+					confirmBtn.innerText = 'OK';
+					confirmBtn.onclick = () => {
+						cleanup();
+						resolve();
+					};
+
 					actionFooter.appendChild(confirmBtn);
 				}
 

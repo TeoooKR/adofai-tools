@@ -76,7 +76,7 @@ h1 {
     align-items: center;
     justify-content: center;
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 32px;
     position: relative;
 }
 
@@ -246,7 +246,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
     width: 100%;
     padding: 10px 14px;
     background: var(--input-bg);
@@ -261,7 +262,8 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
     outline: none;
     border-color: var(--accent-color);
     box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
@@ -873,36 +875,41 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Splitter Tab Styles */
+/* Splitter Tab Styles */
 #tab-splitter .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 #tab-splitter .converter-row {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 #tab-splitter .title-with-help {
-    margin-bottom: 25px;
+    margin-bottom: 15px;
+    /* Reduced from 25px */
 }
 
 #tab-splitter .title-with-help h1 {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
+    /* Slightly smaller */
+    margin-bottom: 0;
 }
 
 #tab-splitter label {
-    margin-bottom: 6px;
-    font-size: 0.9rem;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
 }
 
 #tab-splitter input,
-#tab-splitter textarea {
-    padding: 10px 14px;
-    font-size: 0.95rem;
+#tab-splitter textarea,
+#tab-splitter select {
+    padding: 10px 12px;
+    font-size: 0.9rem;
 }
 
 #tab-splitter .file-input-label {
-    padding: 10px 20px;
-    font-size: 0.9rem;
+    padding: 8px 16px;
+    font-size: 0.85rem;
 }
 
 #tab-splitter .small-text {
@@ -910,7 +917,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 #tab-splitter .input-group:last-child {
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 .splitter-wrapper {
@@ -921,18 +928,19 @@ input[type="range"]::-moz-range-thumb {
 .splitter-wrapper .container {
     flex: 1;
     min-width: 300px;
+    /* Ensure it behaves like other containers */
 }
 
 .splitter-wrapper .visual-container.preview-col {
     flex: 1.2;
     min-width: 350px;
-    height: auto;
+    /* removed height: auto so it stretches */
     min-height: 400px;
 }
 
 .split-buttons-row {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
 }
 
@@ -948,7 +956,8 @@ input[type="range"]::-moz-range-thumb {
     transition: all 0.2s;
     flex: 1;
     min-width: 80px;
-    height: 48px;
+    height: 42px;
+    /* Reduced height */
 }
 
 .action-btn:hover {
@@ -972,13 +981,14 @@ input[type="range"]::-moz-range-thumb {
     background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 12px;
+    padding: 10px;
     min-height: 80px;
-    max-height: 180px;
+    max-height: 150px;
+    /* Reduced max-height */
     overflow-y: auto;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     align-content: flex-start;
 }
 
@@ -986,7 +996,8 @@ input[type="range"]::-moz-range-thumb {
     background: rgba(56, 189, 248, 0.15);
     border: 1px solid rgba(56, 189, 248, 0.3);
     color: var(--accent-color);
-    padding: 4px 10px;
+    padding: 3px 8px;
+    /* Compact padding */
     border-radius: 6px;
     font-size: 0.85rem;
     display: flex;
@@ -1021,4 +1032,27 @@ input[type="range"]::-moz-range-thumb {
     width: 100%;
     text-align: center;
     margin-top: 20px;
+}
+
+.text-tag.selected {
+    background: var(--accent-color);
+    color: #0f172a;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.text-tag.selected .remove-tag {
+    color: rgba(15, 23, 42, 0.6);
+}
+
+.text-tag.selected .remove-tag:hover {
+    color: #ef4444;
+    opacity: 1;
+}
+
+.text-tag span:first-child {
+    white-space: pre-wrap;
+    outline: none;
+    cursor: text;
+    min-width: 5px;
 }
