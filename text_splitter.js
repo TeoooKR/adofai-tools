@@ -209,13 +209,50 @@ function updateSplitterPreview() {
 
     ctx.clearRect(0, 0, width, height);
 
+    const fontSize = height * 0.8 * scale;
+    ctx.font = `${fontSize}px "${loadedFontName}"`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const truncatedIndices = [];
+    const centerX = width / 2 + xOffset;
+    const centerY = height / 2 + yOffset;
+
+    splitterTags.forEach((tag, index) => {
+        const metrics = ctx.measureText(tag);
+
+        const left = centerX - metrics.actualBoundingBoxLeft;
+        const right = centerX + metrics.actualBoundingBoxRight;
+        const top = centerY - metrics.actualBoundingBoxAscent;
+        const bottom = centerY + metrics.actualBoundingBoxDescent;
+
+        if (left < 0 || right > width || top < 0 || bottom > height) {
+            truncatedIndices.push(index);
+        }
+    });
+
+    const warningEl = document.getElementById('preview_warning');
+    if (truncatedIndices.length > 0) {
+        warningEl.style.display = 'block';
+        warningEl.innerText = `⚠️ ${truncatedIndices.length}개의 텍스트가 잘렸습니다! (클릭하여 확인)`;
+        warningEl.style.cursor = 'pointer';
+        warningEl.onclick = () => {
+            let nextIndex = truncatedIndices.find(i => i > currentCharIndex);
+            if (nextIndex === undefined) nextIndex = truncatedIndices[0];
+
+            currentCharIndex = nextIndex;
+            startPreviewCycle();
+            updateSplitterPreview();
+        };
+    } else {
+        warningEl.style.display = 'none';
+        warningEl.onclick = null;
+    }
+
     if (previewTag) {
         ctx.fillStyle = color;
-        ctx.font = `${height * 0.8 * scale}px "${loadedFontName}"`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
 
-        ctx.fillText(previewTag, width / 2 + xOffset, height / 2 + yOffset);
+        ctx.fillText(previewTag, centerX, centerY);
     }
 }
 

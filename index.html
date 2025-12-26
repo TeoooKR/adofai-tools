@@ -175,7 +175,8 @@
 	</div>
 
 
-	<div id="tab-splitter" class="tab-content"> <!-- TODO: 잘리는글자감지, 글자에 맞춰 Width 자동설정, 원하는 텍스트 묶음 프리뷰 보기, zip파일 이름설정 -->
+	<div id="tab-splitter" class="tab-content">
+		<!-- TODO: 배경 색상 설정, 글자 색상 투명도 설정, 저장 포맷 설정, 사진 잘리는글자감지, 글자에 맞춰 Width 자동설정, 원하는 텍스트 묶음 프리뷰 보기, zip파일 이름설정 -->
 		<div class="main-wrapper splitter-wrapper">
 			<div class="container">
 				<div class="title-with-help">
@@ -302,6 +303,10 @@
 					<canvas id="splitterCanvas"></canvas>
 				</div>
 				<div id="preview_filename" class="small-text" style="margin-top: 15px; font-family: monospace;">-</div>
+				<div id="preview_warning" class="small-text"
+					style="color: #ff4444; margin-top: 10px; display: none; font-weight: bold;">
+					⚠️ 일부 글자가 잘렸습니다! (클릭하여 확인)
+				</div>
 			</div>
 		</div>
 	</div>
