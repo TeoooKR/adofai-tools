@@ -11,9 +11,20 @@
 <body>
 
 	<div class="nav-tabs">
-		<button class="nav-tab active" onclick="openTab('pseudo')">Star Calculator</button>
-		<button class="nav-tab" onclick="openTab('new')">Level Converter</button>
-		<button class="nav-tab" onclick="openTab('splitter')">Split Text into Images</button>
+		<div style="width: 80px;"></div>
+		<div style="flex: 1;"></div>
+		<button class="nav-tab active" onclick="openTab('new')" data-i18n="nav.level_converter">Level Converter</button>
+		<button class="nav-tab" onclick="openTab('splitter')" data-i18n="nav.text_splitter">Split Text into
+			Images</button>
+		<button class="nav-tab" onclick="openTab('pseudo')" data-i18n="nav.star_calculator">Star Calculator</button>
+
+
+		<div style="flex: 1;"></div>
+
+		<div class="lang-switcher">
+			<button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">KO</button>
+			<button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+		</div>
 	</div>
 
 
@@ -21,13 +32,14 @@
 		<div class="main-wrapper">
 			<div class="container">
 				<div class="title-with-help">
-					<h1>Star Calculator</h1>
+					<h1 data-i18n="star_calculator.title">Star Calculator</h1>
 					<button class="help-btn"
-						onclick="showHelp('**⭐ Star Calculator**\n\nADOFAI에서 별 패턴을 만드는 데 사용하는 도구입니다.\n\n**📐 각도 결과**\n실제 각도를 그대로 표시합니다.\n레벨 에디터의 자유 각도 입력칸에 순서대로 입력하면 별 모양이 완성됩니다.\n\n**📄 .adofai 결과**\n.adofai 파일 내의 angleData 형식에 맞게 변환한 결과입니다.\n결과를 복사한 뒤 .adofai 파일을 열어 angleData에 붙여 넣으면 설정한 별이 생성됩니다.', '공식 제공: Ceria (감사합니다!)')">?</button>
+						onclick="showHelp(t('star_calculator.help_content'), t('star_calculator.help_footer'))">?</button>
 				</div>
 
 				<div class="input-group">
-					<label for="pseudo_count">한 바퀴 당 동시치기 수 (Pseudo Per Round)</label>
+					<label for="pseudo_count" data-i18n="star_calculator.pseudo_per_round">한 바퀴 당 동시치기 수 (Pseudo Per
+						Round)</label>
 					<div class="input-wrapper">
 						<button class="stepper-btn" onclick="stepValue('pseudo_count', -1)">◀</button>
 						<input type="number" id="pseudo_count" placeholder="Ex: 6" value="6" min="0" max="100"
@@ -37,7 +49,8 @@
 				</div>
 
 				<div class="input-group">
-					<label for="pseudo_interval">동시치기 간격 (Pseudo Interval)</label>
+					<label for="pseudo_interval" data-i18n="star_calculator.pseudo_interval">동시치기 간격 (Pseudo
+						Interval)</label>
 					<div class="input-wrapper">
 						<button class="stepper-btn" onclick="stepValue('pseudo_interval', -1)">◀</button>
 						<input type="number" id="pseudo_interval" placeholder="Ex: 4" value="4" min="1" max="100"
@@ -47,32 +60,32 @@
 				</div>
 
 				<div class="input-group">
-					<label for="pseudo_angle">동시치기 각도 (Pseudo Angle)</label>
+					<label for="pseudo_angle" data-i18n="star_calculator.pseudo_angle">동시치기 각도 (Pseudo Angle)</label>
 					<input type="number" id="pseudo_angle" placeholder="Ex: 22.5" value="22.5" oninput="calculate()">
 
 				</div>
 
 				<div class="input-group">
-					<label>각도 방향</label>
+					<label data-i18n="star_calculator.angle_direction">각도 방향</label>
 					<div class="segmented-control">
 						<button type="button" class="segment-btn active" data-reverse="false"
-							onclick="toggleReverse(false)">외각</button>
-						<button type="button" class="segment-btn" data-reverse="true"
-							onclick="toggleReverse(true)">내각</button>
+							onclick="toggleReverse(false)" data-i18n="star_calculator.outer_angle">외각</button>
+						<button type="button" class="segment-btn" data-reverse="true" onclick="toggleReverse(true)"
+							data-i18n="star_calculator.inner_angle">내각</button>
 					</div>
 					<input type="checkbox" id="pseudo_reverse" style="display: none;">
 				</div>
 
 				<div class="result-area">
 					<div class="result-header">
-						<h2>각도 결과</h2>
+						<h2 data-i18n="star_calculator.angle_result">각도 결과</h2>
 					</div>
 					<div id="result">-</div>
 				</div>
 
 				<div class="result-area">
 					<div class="result-header">
-						<h2>.adofai 결과</h2>
+						<h2 data-i18n="star_calculator.adofai_result">.adofai 결과</h2>
 						<button class="copy-btn" onclick="copyResult('result-adofai')" title="Copy to clipboard">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 								<path
@@ -85,7 +98,7 @@
 			</div>
 
 			<div class="visual-container">
-				<span class="visual-label">Visualization</span>
+				<span class="visual-label" data-i18n="star_calculator.visualization">Visualization</span>
 				<canvas id="visualCanvas"></canvas>
 				<div id="beat-angle-display" class="beat-angle-display" onclick="copyValue(this.innerText)">-</div>
 			</div>
@@ -100,7 +113,7 @@
 				<div
 					style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
 					<div class="title-with-help" style="margin-bottom: 30px;">
-						<h1>Level Converter</h1>
+						<h1 data-i18n="level_converter.title">Level Converter</h1>
 					</div>
 					<div
 						style="width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center;">
@@ -151,9 +164,11 @@
 								<input type="text" id="tuf_legacy" placeholder="TUF (Legacy)">
 							</div>
 							<br>
-							<p class="small-text">ⓘ <a href="https://adofai.gg" target="_blank">ADOFAI.gg</a>와 <a
-									href="https://tuforums.com" target="_blank">TUF</a>의 난이도 책정 기준에는 차이가 있습니다. 참고용으로만
-								사용해 주세요.</p>
+							<p class="small-text disclaimer-text">ⓘ <a href="https://adofai.gg"
+									target="_blank">ADOFAI.gg</a><span
+									data-i18n="level_converter.disclaimer_part1">와</span> <a href="https://tuforums.com"
+									target="_blank">TUF</a><span data-i18n="level_converter.disclaimer_part2">의 난이도 책정
+									기준에는 차이가 있습니다. 참고용으로만 사용해 주세요.</span></p>
 						</div>
 					</div>
 				</div>
@@ -163,11 +178,15 @@
 							Assets</a> © 2022-2024 by <a href="https://tuforums.com/" target="_blank">the Universal
 							Forums</a> is licensed under <a href="https://creativecommons.org/licenses/by/4.0/"
 							target="_blank">the CC BY 4.0 license</a>.</p>
-					<p class="small-text">Credit for PGU icons goes to Sean Lenard B. (@seanlenardb)</p>
-					<p class="small-text">Credit for gradient colors goes to Sean Lenard B. (@seanlenardb) & BadWolf
+					<p class="small-text" data-i18n="level_converter.credits_pgu">Credit for PGU icons goes to Sean
+						Lenard B. (@seanlenardb)</p>
+					<p class="small-text" data-i18n="level_converter.credits_gradient">Credit for gradient colors goes
+						to Sean Lenard B. (@seanlenardb) & BadWolf
 						(@badwolf_100)</p>
-					<p class="small-text">Credit for all icons goes to TEO (@TEO_72)</p>
-					<p class="small-text">Gradient by Unofficial forums, extension by TEO (@TEO_72)</p>
+					<p class="small-text" data-i18n="level_converter.credits_icons">Credit for all icons goes to TEO
+						(@TEO_72)</p>
+					<p class="small-text" data-i18n="level_converter.credits_extension">Gradient by Unofficial forums,
+						extension by TEO (@TEO_72)</p>
 
 				</div>
 			</div>
@@ -175,23 +194,28 @@
 	</div>
 
 
-	<div id="tab-splitter" class="tab-content"> <!-- TODO: 잘리는글자감지, 글자에 맞춰 Width 자동설정, 원하는 텍스트 묶음 프리뷰 보기, zip파일 이름설정 -->
+	<div id="tab-splitter" class="tab-content">
 		<div class="main-wrapper splitter-wrapper">
 			<div class="container">
 				<div class="title-with-help">
-					<h1>Input</h1>
+					<h1 data-i18n="text_splitter.input_title">Input</h1>
 				</div>
 
 				<div class="input-group">
-					<label for="splitter_text">Enter Text</label>
+					<label for="splitter_text" data-i18n="text_splitter.enter_text">Enter Text</label>
 					<div style="display: flex; flex-direction: column; gap: 10px;">
 						<textarea id="splitter_text" placeholder="Ex: Hello World" rows="8"
-							onkeydown="handleSplitterKeyDown(event)"></textarea>
+							onkeydown="handleSplitterKeyDown(event)"
+							data-i18n-placeholder="text_splitter.enter_text_placeholder"></textarea>
 						<div class="split-buttons-row">
-							<button class="action-btn" onclick="addSplitTag()" title="Enter">Input</button>
-							<button class="action-btn secondary" onclick="splitBy('char')" title="Alt+1">글자 분할</button>
-							<button class="action-btn secondary" onclick="splitBy('word')" title="Alt+2">어절 분할</button>
-							<button class="action-btn secondary" onclick="splitBy('line')" title="Alt+3">줄 분할</button>
+							<button class="action-btn" onclick="addSplitTag()" title="Enter"
+								data-i18n="text_splitter.input_btn">Input</button>
+							<button class="action-btn secondary" onclick="splitBy('char')" title="Alt+1"
+								data-i18n="text_splitter.split_char">글자 분할</button>
+							<button class="action-btn secondary" onclick="splitBy('word')" title="Alt+2"
+								data-i18n="text_splitter.split_word">어절 분할</button>
+							<button class="action-btn secondary" onclick="splitBy('line')" title="Alt+3"
+								data-i18n="text_splitter.split_line">줄 분할</button>
 						</div>
 					</div>
 				</div>
@@ -199,10 +223,10 @@
 				<div class="input-group" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
 					<div
 						style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-						<label style="margin-bottom: 0;">Input Text</label>
+						<label style="margin-bottom: 0;" data-i18n="text_splitter.input_text_label">Input Text</label>
 						<button class="action-btn secondary" onclick="clearAllTags()"
 							style="padding: 4px; font-size: 0.75rem; width: 24px; height: 24px; min-width: unset; flex: none; border-radius: 6px; display: flex; align-items: center; justify-content: center;"
-							title="Clear all tags">
+							title="Clear all tags" data-i18n-title="text_splitter.clear_all_tags">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14"
 								fill="currentColor">
 								<path
@@ -211,54 +235,78 @@
 						</button>
 					</div>
 					<div id="splitter_tags_container" class="tags-display-area" style="flex: 1; max-height: none;">
-						<span class="placeholder-text">No tags added yet.</span>
+						<span class="placeholder-text" data-i18n="text_splitter.no_tags">No tags added yet.</span>
 					</div>
 				</div>
 			</div>
 
 			<div class="container">
 				<div class="title-with-help">
-					<h1>Options</h1>
+					<h1 data-i18n="text_splitter.options_title">Options</h1>
 				</div>
 
 				<div class="converter-row" style="display: flex; gap: 10px;">
 					<div style="flex: 1;">
-						<label for="splitter_width">Width</label>
+						<label for="splitter_width"
+							style="display: flex; justify-content: space-between; align-items: center;">
+							<span data-i18n="text_splitter.width">Width</span>
+							<button onclick="autoFitWidth()" class="action-btn secondary"
+								style="padding: 2px 6px; font-size: 0.6rem; height: auto; min-width: 0; width: auto; flex: none; margin-bottom: 0; line-height: 1.2;"
+								title="Fit width to largest text" data-i18n="text_splitter.fit">Fit</button>
+						</label>
 						<input type="number" id="splitter_width" value="500" oninput="updateSplitterPreview()">
 					</div>
 					<div style="flex: 1;">
-						<label for="splitter_height">Height</label>
+						<label for="splitter_height" data-i18n="text_splitter.height">Height</label>
 						<input type="number" id="splitter_height" value="500" oninput="updateSplitterPreview()">
 					</div>
 				</div>
 
 				<div class="input-group">
-					<label for="splitter_prefix">Filename Prefix:</label>
-					<input type="text" id="splitter_prefix" placeholder="Ex: 1_" oninput="updateSplitterPreview()">
+					<label for="splitter_prefix" data-i18n="text_splitter.filename_prefix">Filename Prefix:</label>
+					<input type="text" id="splitter_prefix" placeholder="Ex: 1_" oninput="updateSplitterPreview()"
+						data-i18n-placeholder="text_splitter.filename_prefix_placeholder">
 				</div>
 
 				<div class="input-group">
-					<label>Font (.ttf)</label>
+					<label data-i18n="text_splitter.font_label">Font (.ttf)</label>
 					<div class="input-wrapper">
-						<label for="splitter_font" class="file-input-label">Select Font File</label>
+						<label for="splitter_font" class="file-input-label" data-i18n="text_splitter.select_font">Select
+							Font File</label>
 						<input type="file" id="splitter_font" accept=".ttf" style="display: none;"
 							onchange="handleFontUpload(this)">
-						<span id="font_name_display" class="small-text" style="margin-left: 10px; opacity: 0.7;">No font
+						<span id="font_name_display" class="small-text" style="margin-left: 10px; opacity: 0.7;"
+							data-i18n="text_splitter.no_font">No font
 							selected</span>
 					</div>
 				</div>
 
 				<div class="input-group">
-					<label for="splitter_color">Text Color</label>
+					<label data-i18n="text_splitter.text_color_opacity">Text Color & Opacity</label>
 					<div style="display: flex; gap: 10px; align-items: center;">
 						<input type="color" id="splitter_color" value="#ffffff" oninput="updateSplitterPreview()"
-							style="width: 50px; padding: 0; height: 38px; border: none; background: transparent;">
-						<span id="color_value_display" class="small-text" style="opacity: 0.7;">#FFFFFF</span>
+							style="width: 50px; padding: 0; height: 38px; border: none; background: transparent; cursor: pointer;">
+						<input type="range" id="splitter_text_opacity" min="0" max="100" value="100"
+							oninput="updateSplitterPreview()" style="flex: 1;" title="Opacity">
+						<span id="text_opacity_display" class="small-text"
+							style="width: 40px; text-align: right;">100%</span>
 					</div>
 				</div>
 
 				<div class="input-group">
-					<label for="splitter_scale">Text Size Scale</label>
+					<label data-i18n="text_splitter.bg_color_opacity">Background Color & Opacity</label>
+					<div style="display: flex; gap: 10px; align-items: center;">
+						<input type="color" id="splitter_bg_color" value="#000000" oninput="updateSplitterPreview()"
+							style="width: 50px; padding: 0; height: 38px; border: none; background: transparent; cursor: pointer;">
+						<input type="range" id="splitter_bg_opacity" min="0" max="100" value="0"
+							oninput="updateSplitterPreview()" style="flex: 1;" title="Opacity">
+						<span id="bg_opacity_display" class="small-text"
+							style="width: 40px; text-align: right;">0%</span>
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label for="splitter_scale" data-i18n="text_splitter.text_size_scale">Text Size Scale</label>
 					<div class="input-wrapper">
 						<input type="range" id="splitter_scale" min="0.1" max="5" step="0.1" value="1"
 							oninput="syncSplitterScale(this, 'range-scale')" style="flex: 1;">
@@ -268,7 +316,7 @@
 				</div>
 
 				<div class="input-group">
-					<label for="splitter_x">X Position</label>
+					<label for="splitter_x" data-i18n="text_splitter.x_position">X Position</label>
 					<div class="input-wrapper">
 						<input type="range" id="splitter_x" min="-500" max="500" value="0"
 							oninput="syncSplitterScale(this, 'range-x')" style="flex: 1;">
@@ -278,7 +326,7 @@
 				</div>
 
 				<div class="input-group">
-					<label for="splitter_y">Y Position</label>
+					<label for="splitter_y" data-i18n="text_splitter.y_position">Y Position</label>
 					<div class="input-wrapper">
 						<input type="range" id="splitter_y" min="-500" max="500" value="0"
 							oninput="syncSplitterScale(this, 'range-y')" style="flex: 1;">
@@ -287,8 +335,25 @@
 					</div>
 				</div>
 
-				<div class="input-group" style="margin-top: 20px;">
-					<button class="nav-tab active" style="width: 100%;" onclick="generateSplitterZip()">Generate Images
+				<div class="converter-row" style="display: flex; gap: 10px;">
+					<div style="flex: 1;">
+						<label for="splitter_zip_filename" data-i18n="text_splitter.zip_filename">ZIP Filename</label>
+						<input type="text" id="splitter_zip_filename" placeholder="Ex: split_texts" value="split_texts"
+							data-i18n-placeholder="text_splitter.zip_filename_placeholder">
+					</div>
+					<div style="flex: 1;">
+						<label for="splitter_format" data-i18n="text_splitter.format">Format</label>
+						<select id="splitter_format">
+							<option value="image/png">PNG</option>
+							<option value="image/jpeg">JPG</option>
+							<option value="image/webp">WEBP</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="input-group" style="margin-top: 8px;">
+					<button class="nav-tab active" style="width: 100%;" onclick="generateSplitterZip()"
+						data-i18n="text_splitter.generate_btn">Generate Images
 						(.zip)</button>
 				</div>
 				<div id="splitter_status" class="small-text" style="text-align: center; margin-top: 10px;"></div>
@@ -296,11 +361,13 @@
 
 			<div class="visual-container preview-col"
 				style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; padding: 20px;">
-				<span class="visual-label">Preview</span>
+				<span class="visual-label" data-i18n="text_splitter.preview_title">Preview</span>
 				<div class="preview-canvas-wrapper"
 					style="border: 2px dashed rgba(255,255,255,0.2); box-shadow: 0 0 20px rgba(0,0,0,0.5);">
 					<canvas id="splitterCanvas"></canvas>
 				</div>
+				<div id="preview_warning" class="small-text"
+					style="display: none; color: #ef4444; margin-top: 10px; font-weight: 600;"></div>
 				<div id="preview_filename" class="small-text" style="margin-top: 15px; font-family: monospace;">-</div>
 			</div>
 		</div>
@@ -354,12 +421,10 @@
 				const inputContainer = document.getElementById('modalInputContainer');
 				const actionFooter = document.getElementById('modalActionFooter');
 
-				// Set text
 				helpText.innerHTML = message;
 				if (helpFooter) helpFooter.style.display = 'none';
 				if (inputContainer) inputContainer.innerHTML = '';
 
-				// Clean up previous listeners if any
 				const handleKey = (e) => {
 					if (e.key === 'Enter') {
 						e.preventDefault();
@@ -377,32 +442,75 @@
 					closeHelp();
 				};
 
-				// Listen for Enter key global
 				document.addEventListener('keydown', handleKey);
 
-				// Ensure cleanup if user clicks close buttons directly
 				const safeResolve = (val) => {
 					document.removeEventListener('keydown', handleKey);
 					closeHelp();
 					resolve(val);
 				};
 
-				// Set buttons
 				if (actionFooter) {
 					actionFooter.innerHTML = '';
 					actionFooter.style.display = 'flex';
 
 					const cancelBtn = document.createElement('button');
 					cancelBtn.className = 'modal-btn secondary';
-					cancelBtn.innerText = 'No';
+					cancelBtn.innerText = t('modal.no');
 					cancelBtn.onclick = () => { safeResolve(false); };
 
 					const confirmBtn = document.createElement('button');
 					confirmBtn.className = 'modal-btn primary';
-					confirmBtn.innerText = 'Yes';
+					confirmBtn.innerText = t('modal.yes');
 					confirmBtn.onclick = () => { safeResolve(true); };
 
 					actionFooter.appendChild(cancelBtn);
+					actionFooter.appendChild(confirmBtn);
+				}
+
+				if (modal) modal.style.display = 'flex';
+			});
+		}
+
+		function showAlert(message) {
+			return new Promise((resolve) => {
+				const modal = document.getElementById('helpModal');
+				const helpText = document.getElementById('helpTextContent');
+				const helpFooter = document.getElementById('helpFooter');
+				const inputContainer = document.getElementById('modalInputContainer');
+				const actionFooter = document.getElementById('modalActionFooter');
+
+				helpText.innerHTML = message;
+				if (helpFooter) helpFooter.style.display = 'none';
+				if (inputContainer) inputContainer.innerHTML = '';
+
+				const cleanup = () => {
+					document.removeEventListener('keydown', handleKey);
+					closeHelp();
+				};
+
+				const handleKey = (e) => {
+					if (e.key === 'Enter' || e.key === 'Escape') {
+						e.preventDefault();
+						cleanup();
+						resolve();
+					}
+				};
+
+				document.addEventListener('keydown', handleKey);
+
+				if (actionFooter) {
+					actionFooter.innerHTML = '';
+					actionFooter.style.display = 'flex';
+
+					const confirmBtn = document.createElement('button');
+					confirmBtn.className = 'modal-btn primary';
+					confirmBtn.innerText = t('modal.ok');
+					confirmBtn.onclick = () => {
+						cleanup();
+						resolve();
+					};
+
 					actionFooter.appendChild(confirmBtn);
 				}
 
@@ -418,11 +526,9 @@
 				const inputContainer = document.getElementById('modalInputContainer');
 				const actionFooter = document.getElementById('modalActionFooter');
 
-				// Set text
 				helpText.innerHTML = message;
 				if (helpFooter) helpFooter.style.display = 'none';
 
-				// Set input
 				if (inputContainer) {
 					inputContainer.innerHTML = '';
 					let input;
@@ -438,7 +544,6 @@
 					input.value = defaultValue;
 					inputContainer.appendChild(input);
 
-					// Handle Enter key for single line only
 					if (!isMultiline) {
 						input.onkeydown = (e) => {
 							if (e.key === 'Enter') {
@@ -448,7 +553,6 @@
 							}
 						};
 					} else {
-						// Optional: Ctrl+Enter for multiline
 						input.onkeydown = (e) => {
 							if (e.key === 'Enter' && e.ctrlKey) {
 								const val = input.value;
@@ -459,19 +563,18 @@
 					}
 				}
 
-				// Set buttons
 				if (actionFooter) {
 					actionFooter.innerHTML = '';
 					actionFooter.style.display = 'flex';
 
 					const cancelBtn = document.createElement('button');
 					cancelBtn.className = 'modal-btn secondary';
-					cancelBtn.innerText = 'Cancel';
+					cancelBtn.innerText = t('modal.cancel');
 					cancelBtn.onclick = () => { closeHelp(); resolve(null); };
 
 					const confirmBtn = document.createElement('button');
 					confirmBtn.className = 'modal-btn primary';
-					confirmBtn.innerText = 'OK';
+					confirmBtn.innerText = t('modal.ok');
 					confirmBtn.onclick = () => {
 						const el = inputContainer.querySelector('input') || inputContainer.querySelector('textarea');
 						const val = el ? el.value : '';
@@ -504,6 +607,8 @@
 	</script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+	<script src="translations_data.js"></script>
+	<script src="i18n.js"></script>
 	<script src="star_calculator.js"></script>
 	<script src="level_converter.js"></script>
 	<script src="text_splitter.js"></script>

@@ -20,9 +20,16 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
+    overflow-x: hidden;
+    /* Prevent horizontal shifts */
     padding-top: 20px;
 }
+
+* {
+    box-sizing: border-box;
+}
+
+/* Global consistency */
 
 .main-wrapper {
     display: flex;
@@ -30,11 +37,12 @@ body {
     width: 90%;
     max-width: 1000px;
     align-items: stretch;
-    height: 80vh;
+    min-height: 80vh;
 }
 
 .container {
-    flex: 1;
+    flex: 1 0 40%;
+    /* Solid basis percentage */
     background: var(--container-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -45,11 +53,13 @@ body {
     animation: fadeIn 0.8s ease-out;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    box-sizing: border-box;
+    /* Ensure padding doesn't affect basis calculation */
 }
 
 .visual-container {
-    flex: 1.5;
+    flex: 1.5 0 55%;
+    /* Solid basis percentage */
     background: var(--container-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -69,6 +79,11 @@ h1 {
     color: #fff;
     letter-spacing: -0.5px;
     font-size: 1.5rem;
+    height: 1.8rem;
+    /* Fix title height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .title-with-help {
@@ -167,6 +182,12 @@ input:checked+.slider:before {
     background-color: var(--accent-color);
 }
 
+.disclaimer-text {
+    white-space: nowrap;
+    text-align: center;
+    width: 100%;
+}
+
 .toggle-label {
     font-size: 0.9rem;
     color: #94a3b8;
@@ -210,6 +231,11 @@ input:checked+.slider:before {
     box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
 }
 
+.segment-btn {
+    height: 42px;
+    /* Fixed height for consistent control size */
+}
+
 
 .segment-btn[data-reverse="true"].active {
     background: #ef4444;
@@ -243,10 +269,15 @@ label {
     font-size: 0.85rem;
     color: #94a3b8;
     font-weight: 500;
+    height: 1.2rem;
+    /* Fixed height for labels */
+    white-space: nowrap;
+    /* Prevent line wrapping */
 }
 
 input,
-textarea {
+textarea,
+select {
     width: 100%;
     padding: 10px 14px;
     background: var(--input-bg);
@@ -261,7 +292,8 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
     outline: none;
     border-color: var(--accent-color);
     box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
@@ -282,6 +314,8 @@ input[type=text] {
     border: 1px solid var(--border-color);
     color: var(--accent-color);
     width: 45px;
+    height: 48px;
+    /* Match input height */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -441,23 +475,31 @@ canvas {
 
 .nav-tabs {
     display: flex;
-    justify-content: center;
+    align-items: center;
     gap: 10px;
     margin-bottom: 20px;
     z-index: 10;
+    width: 90%;
+    max-width: 1000px;
 }
 
 .nav-tab {
     background: rgba(30, 41, 59, 0.5);
     border: 1px solid var(--border-color);
     color: #94a3b8;
-    padding: 10px 24px;
+    padding: 0 24px;
+    height: 44px;
+    /* Fixed height for tabs */
     border-radius: 12px;
     cursor: pointer;
     font-size: 1rem;
     font-weight: 500;
     transition: all 0.3s ease;
     font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 .nav-tab:hover {
@@ -601,6 +643,11 @@ canvas {
     grid-template-columns: repeat(5, 1fr);
     gap: 8px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.converter-row label {
+    height: 1.2rem;
+    display: block;
 }
 
 .options-container.show {
@@ -783,13 +830,19 @@ textarea.modal-input {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid var(--border-color);
     color: var(--accent-color);
-    padding: 10px 20px;
+    padding: 0 20px;
+    height: 36px;
+    margin-top: 4px;
+    /* Increased height from original implicitly calculated one */
     border-radius: 10px;
     cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 600;
     transition: all 0.2s;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 .file-input-label:hover {
@@ -874,15 +927,19 @@ input[type="range"]::-moz-range-thumb {
 
 /* Splitter Tab Styles */
 #tab-splitter .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    /* Reduced from 12px */
 }
 
 #tab-splitter .converter-row {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    /* Reduced from 12px */
 }
 
 #tab-splitter .title-with-help {
+    margin-top: 5px;
     margin-bottom: 25px;
+    /* Further reduced from 24px */
 }
 
 #tab-splitter .title-with-help h1 {
@@ -890,13 +947,22 @@ input[type="range"]::-moz-range-thumb {
 }
 
 #tab-splitter label {
-    margin-bottom: 6px;
+    margin-bottom: 2px;
+    font-size: 0.85rem;
+}
+
+#tab-splitter input,
+#tab-splitter textarea,
+#tab-splitter select {
+    padding: 8px 12px;
+    /* Reduced from 10px */
     font-size: 0.9rem;
 }
 
 #tab-splitter input,
 #tab-splitter textarea {
-    padding: 10px 14px;
+    padding: 8px 14px;
+    /* Reduced from 10px */
     font-size: 0.95rem;
 }
 
@@ -910,24 +976,35 @@ input[type="range"]::-moz-range-thumb {
 }
 
 #tab-splitter .input-group:last-child {
-    margin-top: 15px;
+    margin-top: 5px;
+    /* Reduced from 10px */
 }
 
 .splitter-wrapper {
     max-width: 1400px !important;
     width: 95% !important;
+    height: 780px;
+    /* Fixed height to prevent language-switch jitter */
 }
 
 .splitter-wrapper .container {
-    flex: 1;
-    min-width: 300px;
+    flex: 1 0 32%;
+    min-width: 320px;
+    height: 100%;
+    /* Fill the fixed height wrapper */
+    box-sizing: border-box;
+    overflow-y: hidden;
+    /* Try to hide scrollbar if close enough */
+    padding: 20px 25px;
+    /* Reduced padding from 30px */
 }
 
 .splitter-wrapper .visual-container.preview-col {
-    flex: 1.2;
-    min-width: 350px;
-    height: auto;
-    min-height: 400px;
+    flex: 1.2 0 35%;
+    min-width: 380px;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
 }
 
 .split-buttons-row {
@@ -991,7 +1068,7 @@ input[type="range"]::-moz-range-thumb {
     font-size: 0.85rem;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     cursor: pointer;
     transition: all 0.2s;
     user-select: none;
@@ -999,11 +1076,11 @@ input[type="range"]::-moz-range-thumb {
 
 .text-tag:hover {
     background: rgba(56, 189, 248, 0.25);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
 .text-tag .remove-tag {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     line-height: 1;
     opacity: 0.6;
     transition: opacity 0.2s;
@@ -1021,4 +1098,62 @@ input[type="range"]::-moz-range-thumb {
     width: 100%;
     text-align: center;
     margin-top: 20px;
+}
+
+.text-tag.selected {
+    background: var(--accent-color);
+    color: #0f172a;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.text-tag.selected .remove-tag {
+    color: rgba(15, 23, 42, 0.6);
+}
+
+.text-tag.selected .remove-tag:hover {
+    color: #ef4444;
+    opacity: 1;
+}
+
+.text-tag span:first-child {
+    white-space: pre-wrap;
+    outline: none;
+    cursor: text;
+    min-width: 5px;
+}
+
+/* Language Switcher */
+.lang-switcher {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: 15px;
+    flex-shrink: 0;
+    /* Prevent language switcher from shrinking */
+    width: 80px;
+    /* Fixed width for stability */
+    justify-content: flex-end;
+}
+
+.lang-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.lang-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.lang-btn.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
 }

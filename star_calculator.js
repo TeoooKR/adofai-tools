@@ -53,7 +53,7 @@ function calculate() {
     pIntervalInput.value = pInterval;
 
     if (isNaN(pCount) || isNaN(pInterval) || isNaN(pAngle)) {
-        document.getElementById('result').innerText = "Please enter valid numbers.";
+        document.getElementById('result').innerText = t('star_calculator.valid_numbers_error');
         return;
     }
 

@@ -11,14 +11,14 @@ function openTab(tabName) {
 
     document.getElementById('tab-' + tabName).classList.add('active');
 
-    if (tabName === 'pseudo') {
+    if (tabName === 'new') {
         tabs[0].classList.add('active');
         setTimeout(calculate, 10);
-    } else if (tabName === 'new') {
-        tabs[1].classList.add('active');
     } else if (tabName === 'splitter') {
-        tabs[2].classList.add('active');
+        tabs[1].classList.add('active');
         initTextSplitter();
+    } else if (tabName === 'pseudo') {
+        tabs[2].classList.add('active');
     }
 }
 
