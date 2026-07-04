@@ -66,7 +66,7 @@ function applyTranslations() {
             }
         } else if (el.tagName === 'SELECT') {
         } else {
-            el.innerText = translation;
+            el.innerHTML = translation;
         }
     });
 

@@ -109,7 +109,7 @@ function syncSplitterScale(el, type) {
 }
 
 function handleSplitterKeyDown(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && e.ctrlKey) {
         e.preventDefault();
         addSplitTag();
     } else if (e.altKey && e.key === '1') {
@@ -213,6 +213,40 @@ function renderTags() {
         if (selectedIndices.has(index)) {
             tagEl.classList.add('selected');
         }
+
+        tagEl.setAttribute('draggable', 'true');
+        tagEl.setAttribute('data-index', index);
+
+        tagEl.ondragstart = (e) => {
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', index);
+            tagEl.classList.add('dragging');
+        };
+        tagEl.ondragend = () => {
+            tagEl.classList.remove('dragging');
+            document.querySelectorAll('.text-tag.drag-over').forEach(el => el.classList.remove('drag-over'));
+        };
+        tagEl.ondragover = (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            tagEl.classList.add('drag-over');
+        };
+        tagEl.ondragleave = () => {
+            tagEl.classList.remove('drag-over');
+        };
+        tagEl.ondrop = (e) => {
+            e.preventDefault();
+            tagEl.classList.remove('drag-over');
+            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+            const toIndex = index;
+            if (fromIndex !== toIndex) {
+                const [moved] = splitterTags.splice(fromIndex, 1);
+                splitterTags.splice(toIndex, 0, moved);
+                selectedIndices.clear();
+                renderTags();
+                updateSplitterPreview();
+            }
+        };
 
         tagEl.onclick = (e) => handleTagClick(index, e);
 
@@ -341,6 +375,38 @@ function startInlineEdit(index) {
 
 
 
+function getFilenameForTag(tag, index) {
+    const useNumbering = document.getElementById('splitter_numbering');
+    if (useNumbering && useNumbering.checked) {
+        return String(index + 1);
+    }
+    return tag;
+}
+
+function fillTextMultiline(ctx, text, x, y, fontSize) {
+    const lines = text.split('\n');
+    if (lines.length <= 1) {
+        ctx.fillText(text, x, y);
+        return;
+    }
+    const lineHeight = fontSize * 1.2;
+    const totalHeight = lineHeight * (lines.length - 1);
+    const startY = y - totalHeight / 2;
+    for (let i = 0; i < lines.length; i++) {
+        ctx.fillText(lines[i], x, startY + i * lineHeight);
+    }
+}
+
+function measureTextMultiline(ctx, text) {
+    const lines = text.split('\n');
+    let maxWidth = 0;
+    for (const line of lines) {
+        const w = ctx.measureText(line).width;
+        if (w > maxWidth) maxWidth = w;
+    }
+    return maxWidth;
+}
+
 function updateSplitterPreview() {
     const width = parseInt(document.getElementById('splitter_width').value) || 500;
     const height = parseInt(document.getElementById('splitter_height').value) || 500;
@@ -369,9 +435,11 @@ function updateSplitterPreview() {
     canvas.height = height;
 
     const previewTag = splitterTags.length > 0 ? splitterTags[currentCharIndex % splitterTags.length] : "";
+    const previewIndex = splitterTags.length > 0 ? currentCharIndex % splitterTags.length : 0;
 
     if (previewTag) {
-        document.getElementById('preview_filename').innerText = `${prefix}${previewTag}${ext}`;
+        const displayName = getFilenameForTag(previewTag, previewIndex).replace(/\n/g, ' ');
+        document.getElementById('preview_filename').innerText = `${prefix}${displayName}${ext}`;
     } else {
         document.getElementById('preview_filename').innerText = "-";
     }
@@ -391,13 +459,14 @@ function updateSplitterPreview() {
     const centerY = height / 2 + yOffset;
 
     splitterTags.forEach((tag, index) => {
-        const metrics = ctx.measureText(tag);
-        const left = centerX - metrics.actualBoundingBoxLeft;
-        const right = centerX + metrics.actualBoundingBoxRight;
-        const top = centerY - metrics.actualBoundingBoxAscent;
-        const bottom = centerY + metrics.actualBoundingBoxDescent;
+        const mw = measureTextMultiline(ctx, tag);
+        const lines = tag.split('\n');
+        const lineHeight = fontSize * 1.2;
+        const totalTextHeight = lineHeight * lines.length;
+        const halfW = mw / 2;
+        const halfH = totalTextHeight / 2;
 
-        if (left < 0 || right > width || top < 0 || bottom > height) {
+        if (centerX - halfW < 0 || centerX + halfW > width || centerY - halfH < 0 || centerY + halfH > height) {
             truncatedIndices.push(index);
         }
     });
@@ -421,16 +490,13 @@ function updateSplitterPreview() {
 
     if (previewTag) {
         ctx.save();
-        
         ctx.globalCompositeOperation = 'destination-out';
         ctx.fillStyle = 'rgba(0,0,0,1)';
-        ctx.fillText(previewTag, centerX, centerY);
+        fillTextMultiline(ctx, previewTag, centerX, centerY, fontSize);
         ctx.restore();
 
-        
-        
         ctx.fillStyle = hexToRgba(textColorHex, textOpacity / 100);
-        ctx.fillText(previewTag, centerX, centerY);
+        fillTextMultiline(ctx, previewTag, centerX, centerY, fontSize);
     }
 }
 
@@ -482,29 +548,29 @@ async function generateSplitterZip() {
         offCanvas.width = width;
         offCanvas.height = height;
 
-        for (const tag of splitterTags) {
+        const fontSize = height * 0.8 * scale;
+        for (let i = 0; i < splitterTags.length; i++) {
+            const tag = splitterTags[i];
             offCtx.clearRect(0, 0, width, height);
 
-            
             offCtx.globalCompositeOperation = 'source-over';
             offCtx.fillStyle = hexToRgba(bgColorHex, bgOpacity);
             offCtx.fillRect(0, 0, width, height);
 
-            
             offCtx.globalCompositeOperation = 'destination-out';
             offCtx.fillStyle = 'rgba(0,0,0,1)';
-            offCtx.font = `${height * 0.8 * scale}px "${loadedFontName}"`;
+            offCtx.font = `${fontSize}px "${loadedFontName}"`;
             offCtx.textAlign = 'center';
             offCtx.textBaseline = 'middle';
-            offCtx.fillText(tag, width / 2 + xOffset, height / 2 + yOffset);
+            fillTextMultiline(offCtx, tag, width / 2 + xOffset, height / 2 + yOffset, fontSize);
 
-            
             offCtx.globalCompositeOperation = 'source-over';
             offCtx.fillStyle = hexToRgba(textColorHex, textOpacity);
-            offCtx.fillText(tag, width / 2 + xOffset, height / 2 + yOffset);
+            fillTextMultiline(offCtx, tag, width / 2 + xOffset, height / 2 + yOffset, fontSize);
 
             const blob = await new Promise(resolve => offCanvas.toBlob(resolve, format));
-            zip.file(`${prefix}${tag}${ext}`, blob);
+            const displayName = getFilenameForTag(tag, i).replace(/\n/g, ' ');
+            zip.file(`${prefix}${displayName}${ext}`, blob);
         }
 
         const content = await zip.generateAsync({ type: "blob" });
@@ -537,10 +603,8 @@ async function autoFitWidth() {
 
     let maxW = 0;
     splitterTags.forEach(tag => {
-        const metrics = ctx.measureText(tag);
-        const w = Math.abs(metrics.actualBoundingBoxLeft) + Math.abs(metrics.actualBoundingBoxRight);
-        const currentW = Math.max(w, metrics.width);
-        if (currentW > maxW) maxW = currentW;
+        const mw = measureTextMultiline(ctx, tag);
+        if (mw > maxW) maxW = mw;
     });
 
     if (maxW > 0) {
