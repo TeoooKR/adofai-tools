@@ -38,9 +38,23 @@ function getTranslation(key, params = {}) {
         if (result && result[k]) {
             result = result[k];
         } else {
-            return key;
+            result = null;
+            break;
         }
     }
+
+    if (result == null && currentLang !== 'en') {
+        result = translations['en'];
+        for (const k of keys) {
+            if (result && result[k]) {
+                result = result[k];
+            } else {
+                return key;
+            }
+        }
+    }
+
+    if (result == null) return key;
 
     Object.keys(params).forEach(p => {
         result = result.replace(`{${p}}`, params[p]);
