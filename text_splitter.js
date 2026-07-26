@@ -7,6 +7,7 @@ let selectedIndices = new Set();
 let lastSelectedIndex = -1;
 let isEditing = false;
 let splitterInitialized = false;
+let isCustomFont = false;
 
 function initTextSplitter() {
     renderTags();
@@ -79,7 +80,9 @@ function handleFontUpload(input) {
             fontFace.load().then(function (loadedFace) {
                 document.fonts.add(loadedFace);
                 loadedFontName = fontName;
+                isCustomFont = true;
                 document.getElementById('font_name_display').innerText = file.name;
+                updateFontStyleButtons();
                 updateSplitterPreview();
             }).catch(function (error) {
                 console.error('Font loading failed:', error);
@@ -104,8 +107,46 @@ function syncSplitterScale(el, type) {
         document.getElementById('splitter_x').value = val;
     } else if (type === 'num-y') {
         document.getElementById('splitter_y').value = val;
+    } else if (type === 'range-ls') {
+        document.getElementById('splitter_letter_spacing_num').value = val;
+    } else if (type === 'num-ls') {
+        document.getElementById('splitter_letter_spacing').value = val;
+    } else if (type === 'range-lh') {
+        document.getElementById('splitter_line_height_num').value = val;
+    } else if (type === 'num-lh') {
+        document.getElementById('splitter_line_height').value = val;
     }
     updateSplitterPreview();
+}
+
+function toggleFontStyle(style) {
+    const btn = document.getElementById(style === 'bold' ? 'splitter_bold' : 'splitter_italic');
+    if (btn.disabled) return;
+    btn.classList.toggle('active');
+    updateSplitterPreview();
+}
+
+function updateFontStyleButtons() {
+    const boldBtn = document.getElementById('splitter_bold');
+    const italicBtn = document.getElementById('splitter_italic');
+    if (isCustomFont) {
+        boldBtn.classList.remove('active');
+        italicBtn.classList.remove('active');
+        boldBtn.disabled = true;
+        italicBtn.disabled = true;
+    } else {
+        boldBtn.disabled = false;
+        italicBtn.disabled = false;
+    }
+}
+
+function getFontStyleString() {
+    const isBold = document.getElementById('splitter_bold').classList.contains('active');
+    const isItalic = document.getElementById('splitter_italic').classList.contains('active');
+    let style = '';
+    if (isItalic) style += 'italic ';
+    if (isBold) style += 'bold ';
+    return style;
 }
 
 function handleSplitterKeyDown(e) {
@@ -383,25 +424,62 @@ function getFilenameForTag(tag, index) {
     return tag;
 }
 
-function fillTextMultiline(ctx, text, x, y, fontSize) {
-    const lines = text.split('\n');
-    if (lines.length <= 1) {
+function fillTextWithSpacing(ctx, text, x, y, letterSpacing) {
+    if (letterSpacing === 0) {
         ctx.fillText(text, x, y);
         return;
     }
-    const lineHeight = fontSize * 1.2;
-    const totalHeight = lineHeight * (lines.length - 1);
-    const startY = y - totalHeight / 2;
-    for (let i = 0; i < lines.length; i++) {
-        ctx.fillText(lines[i], x, startY + i * lineHeight);
+    // Calculate total width with spacing to center properly
+    const chars = [...text];
+    let totalWidth = 0;
+    for (const ch of chars) {
+        totalWidth += ctx.measureText(ch).width;
+    }
+    totalWidth += letterSpacing * (chars.length - 1);
+    
+    let currentX = x - totalWidth / 2;
+    for (const ch of chars) {
+        const charW = ctx.measureText(ch).width;
+        ctx.fillText(ch, currentX + charW / 2, y);
+        currentX += charW + letterSpacing;
     }
 }
 
-function measureTextMultiline(ctx, text) {
+function fillTextMultiline(ctx, text, x, y, fontSize, lineHeightMul, letterSpacing) {
+    const lh = lineHeightMul || 1.2;
+    const ls = letterSpacing || 0;
+    const lines = text.split('\n');
+    if (lines.length <= 1) {
+        fillTextWithSpacing(ctx, text, x, y, ls);
+        return;
+    }
+    const lineHeight = fontSize * lh;
+    const totalHeight = lineHeight * (lines.length - 1);
+    const startY = y - totalHeight / 2;
+    for (let i = 0; i < lines.length; i++) {
+        fillTextWithSpacing(ctx, lines[i], x, startY + i * lineHeight, ls);
+    }
+}
+
+function measureTextWithSpacing(ctx, text, letterSpacing) {
+    if (letterSpacing === 0) {
+        return ctx.measureText(text).width;
+    }
+    const chars = [...text];
+    let totalWidth = 0;
+    for (const ch of chars) {
+        totalWidth += ctx.measureText(ch).width;
+    }
+    totalWidth += letterSpacing * Math.max(0, chars.length - 1);
+    return totalWidth;
+}
+
+function measureTextMultiline(ctx, text, letterSpacing) {
+    const ls = letterSpacing || 0;
     const lines = text.split('\n');
     let maxWidth = 0;
     for (const line of lines) {
-        const w = ctx.measureText(line).width;
+        const w = measureTextWithSpacing(ctx, line, ls);
         if (w > maxWidth) maxWidth = w;
     }
     return maxWidth;
@@ -422,6 +500,9 @@ function updateSplitterPreview() {
     const scale = parseFloat(document.getElementById('splitter_scale_num').value) || 0;
     const xOffset = parseFloat(document.getElementById('splitter_x_num').value) || 0;
     const yOffset = parseFloat(document.getElementById('splitter_y_num').value) || 0;
+    const letterSpacing = parseFloat(document.getElementById('splitter_letter_spacing_num').value) || 0;
+    const lineHeightMul = parseFloat(document.getElementById('splitter_line_height_num').value) || 1.2;
+    const fontStyle = getFontStyleString();
     const prefix = document.getElementById('splitter_prefix').value;
     const format = document.getElementById('splitter_format').value;
     let ext = '.png';
@@ -450,7 +531,7 @@ function updateSplitterPreview() {
     ctx.fillRect(0, 0, width, height);
 
     const fontSize = height * 0.8 * scale;
-    ctx.font = `${fontSize}px "${loadedFontName}"`;
+    ctx.font = `${fontStyle}${fontSize}px "${loadedFontName}"`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -459,9 +540,9 @@ function updateSplitterPreview() {
     const centerY = height / 2 + yOffset;
 
     splitterTags.forEach((tag, index) => {
-        const mw = measureTextMultiline(ctx, tag);
+        const mw = measureTextMultiline(ctx, tag, letterSpacing);
         const lines = tag.split('\n');
-        const lineHeight = fontSize * 1.2;
+        const lineHeight = fontSize * lineHeightMul;
         const totalTextHeight = lineHeight * lines.length;
         const halfW = mw / 2;
         const halfH = totalTextHeight / 2;
@@ -492,11 +573,11 @@ function updateSplitterPreview() {
         ctx.save();
         ctx.globalCompositeOperation = 'destination-out';
         ctx.fillStyle = 'rgba(0,0,0,1)';
-        fillTextMultiline(ctx, previewTag, centerX, centerY, fontSize);
+        fillTextMultiline(ctx, previewTag, centerX, centerY, fontSize, lineHeightMul, letterSpacing);
         ctx.restore();
 
         ctx.fillStyle = hexToRgba(textColorHex, textOpacity / 100);
-        fillTextMultiline(ctx, previewTag, centerX, centerY, fontSize);
+        fillTextMultiline(ctx, previewTag, centerX, centerY, fontSize, lineHeightMul, letterSpacing);
     }
 }
 
@@ -520,6 +601,9 @@ async function generateSplitterZip() {
     const scale = parseFloat(document.getElementById('splitter_scale_num').value) || 1;
     const xOffset = parseFloat(document.getElementById('splitter_x_num').value) || 0;
     const yOffset = parseFloat(document.getElementById('splitter_y_num').value) || 0;
+    const letterSpacing = parseFloat(document.getElementById('splitter_letter_spacing_num').value) || 0;
+    const lineHeightMul = parseFloat(document.getElementById('splitter_line_height_num').value) || 1.2;
+    const fontStyle = getFontStyleString();
     const prefix = document.getElementById('splitter_prefix').value;
 
     const format = document.getElementById('splitter_format').value;
@@ -559,14 +643,14 @@ async function generateSplitterZip() {
 
             offCtx.globalCompositeOperation = 'destination-out';
             offCtx.fillStyle = 'rgba(0,0,0,1)';
-            offCtx.font = `${fontSize}px "${loadedFontName}"`;
+            offCtx.font = `${fontStyle}${fontSize}px "${loadedFontName}"`;
             offCtx.textAlign = 'center';
             offCtx.textBaseline = 'middle';
-            fillTextMultiline(offCtx, tag, width / 2 + xOffset, height / 2 + yOffset, fontSize);
+            fillTextMultiline(offCtx, tag, width / 2 + xOffset, height / 2 + yOffset, fontSize, lineHeightMul, letterSpacing);
 
             offCtx.globalCompositeOperation = 'source-over';
             offCtx.fillStyle = hexToRgba(textColorHex, textOpacity);
-            fillTextMultiline(offCtx, tag, width / 2 + xOffset, height / 2 + yOffset, fontSize);
+            fillTextMultiline(offCtx, tag, width / 2 + xOffset, height / 2 + yOffset, fontSize, lineHeightMul, letterSpacing);
 
             const blob = await new Promise(resolve => offCanvas.toBlob(resolve, format));
             const displayName = getFilenameForTag(tag, i).replace(/\n/g, ' ');
@@ -594,16 +678,18 @@ async function autoFitWidth() {
 
     const height = parseInt(document.getElementById('splitter_height').value) || 500;
     const scale = parseFloat(document.getElementById('splitter_scale_num').value) || 1;
+    const letterSpacing = parseFloat(document.getElementById('splitter_letter_spacing_num').value) || 0;
+    const fontStyle = getFontStyleString();
 
     const canvas = document.getElementById('splitterCanvas');
     const ctx = canvas.getContext('2d');
 
     const fontSize = height * 0.8 * scale;
-    ctx.font = `${fontSize}px "${loadedFontName}"`;
+    ctx.font = `${fontStyle}${fontSize}px "${loadedFontName}"`;
 
     let maxW = 0;
     splitterTags.forEach(tag => {
-        const mw = measureTextMultiline(ctx, tag);
+        const mw = measureTextMultiline(ctx, tag, letterSpacing);
         if (mw > maxW) maxW = mw;
     });
 

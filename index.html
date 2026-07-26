@@ -266,122 +266,162 @@
 					</div>
 				</div>
 
-				<div class="container">
+				<div class="container splitter-options-container">
 					<div class="title-with-help">
 						<h1 data-i18n="text_splitter.options_title">Options</h1>
 					</div>
 
-					<div class="converter-row" style="display: flex; gap: 10px;">
-						<div style="flex: 1;">
-							<label for="splitter_width"
-								style="display: flex; justify-content: space-between; align-items: center;">
-								<span data-i18n="text_splitter.width">Width</span>
-								<button onclick="autoFitWidth()" class="action-btn secondary"
-									style="padding: 2px 6px; font-size: 0.6rem; height: auto; min-width: 0; width: auto; flex: none; margin-bottom: 0; line-height: 1.2;"
-									title="Fit width to largest text" data-i18n="text_splitter.fit">Fit</button>
-							</label>
-							<input type="number" id="splitter_width" value="500" oninput="updateSplitterPreview()">
-						</div>
-						<div style="flex: 1;">
-							<label for="splitter_height" data-i18n="text_splitter.height">Height</label>
-							<input type="number" id="splitter_height" value="500" oninput="updateSplitterPreview()">
-						</div>
-					</div>
+					<div class="splitter-options-grid">
+						<!-- Left Column -->
+						<div class="splitter-options-col">
+							<div class="converter-row" style="display: flex; gap: 10px;">
+								<div style="flex: 1;">
+									<label for="splitter_width"
+										style="display: flex; justify-content: space-between; align-items: center;">
+										<span data-i18n="text_splitter.width">Width</span>
+										<button onclick="autoFitWidth()" class="action-btn secondary"
+											style="padding: 2px 6px; font-size: 0.6rem; height: auto; min-width: 0; width: auto; flex: none; margin-bottom: 0; line-height: 1.2;"
+											title="Fit width to largest text" data-i18n="text_splitter.fit">Fit</button>
+									</label>
+									<input type="number" id="splitter_width" value="500" oninput="updateSplitterPreview()">
+								</div>
+								<div style="flex: 1;">
+									<label for="splitter_height" data-i18n="text_splitter.height">Height</label>
+									<input type="number" id="splitter_height" value="500" oninput="updateSplitterPreview()">
+								</div>
+							</div>
 
-					<div class="input-group">
-						<label for="splitter_prefix" data-i18n="text_splitter.filename_prefix">Filename Prefix:</label>
-						<input type="text" id="splitter_prefix" placeholder="Ex: 1_" oninput="updateSplitterPreview()"
-							data-i18n-placeholder="text_splitter.filename_prefix_placeholder">
-						<div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
-							<input type="checkbox" id="splitter_numbering" onchange="updateSplitterPreview()"
-								style="width: auto; margin: 0; accent-color: var(--accent-color);">
-							<label for="splitter_numbering" style="margin: 0; cursor: pointer; font-size: 0.8rem; opacity: 0.8;"
-								data-i18n="text_splitter.numbering_label">Use sequential numbering (1, 2, 3...)</label>
-						</div>
-					</div>
+							<div class="input-group">
+								<label for="splitter_prefix" data-i18n="text_splitter.filename_prefix">Filename Prefix:</label>
+								<input type="text" id="splitter_prefix" placeholder="Ex: 1_" oninput="updateSplitterPreview()"
+									data-i18n-placeholder="text_splitter.filename_prefix_placeholder">
+								<div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+									<input type="checkbox" id="splitter_numbering" onchange="updateSplitterPreview()"
+										style="width: auto; margin: 0; accent-color: var(--accent-color);">
+									<label for="splitter_numbering" style="margin: 0; cursor: pointer; font-size: 0.8rem; opacity: 0.8;"
+										data-i18n="text_splitter.numbering_label">Use sequential numbering (1, 2, 3...)</label>
+								</div>
+							</div>
 
-					<div class="input-group">
-						<label data-i18n="text_splitter.font_label">Font (.ttf / .otf)</label>
-						<div class="input-wrapper">
-							<label for="splitter_font" class="file-input-label"
-								data-i18n="text_splitter.select_font">Select
-								Font File</label>
-							<input type="file" id="splitter_font" accept=".ttf,.otf" style="display: none;"
-								onchange="handleFontUpload(this)">
-							<span id="font_name_display" class="small-text" style="margin-left: 10px; opacity: 0.7;"
-								data-i18n="text_splitter.no_font">No font
-								selected</span>
-						</div>
-					</div>
+							<div class="input-group">
+								<label data-i18n="text_splitter.font_label">Font (.ttf / .otf)</label>
+								<div class="input-wrapper">
+									<label for="splitter_font" class="file-input-label"
+										data-i18n="text_splitter.select_font">Select
+										Font File</label>
+									<input type="file" id="splitter_font" accept=".ttf,.otf" style="display: none;"
+										onchange="handleFontUpload(this)">
+									<span id="font_name_display" class="small-text" style="margin-left: 10px; opacity: 0.7;"
+										data-i18n="text_splitter.no_font">No font
+										selected</span>
+								</div>
+							</div>
 
-					<div class="input-group">
-						<label data-i18n="text_splitter.text_color_opacity">Text Color & Opacity</label>
-						<div style="display: flex; gap: 10px; align-items: center;">
-							<input type="color" id="splitter_color" value="#ffffff" oninput="updateSplitterPreview()"
-								style="width: 50px; padding: 0; height: 38px; border: none; background: transparent; cursor: pointer;">
-							<input type="range" id="splitter_text_opacity" min="0" max="100" value="100"
-								oninput="updateSplitterPreview()" style="flex: 1;" title="Opacity">
-							<span id="text_opacity_display" class="small-text"
-								style="width: 40px; text-align: right;">100%</span>
-						</div>
-					</div>
+							<div class="input-group">
+								<label data-i18n="text_splitter.text_color_opacity">Text Color & Opacity</label>
+								<div style="display: flex; gap: 10px; align-items: center;">
+									<input type="color" id="splitter_color" value="#ffffff" oninput="updateSplitterPreview()"
+										style="width: 50px; padding: 0; height: 38px; border: none; background: transparent; cursor: pointer;">
+									<input type="range" id="splitter_text_opacity" min="0" max="100" value="100"
+										oninput="updateSplitterPreview()" style="flex: 1;" title="Opacity">
+									<span id="text_opacity_display" class="small-text"
+										style="width: 40px; text-align: right;">100%</span>
+								</div>
+							</div>
 
-					<div class="input-group">
-						<label data-i18n="text_splitter.bg_color_opacity">Background Color & Opacity</label>
-						<div style="display: flex; gap: 10px; align-items: center;">
-							<input type="color" id="splitter_bg_color" value="#000000" oninput="updateSplitterPreview()"
-								style="width: 50px; padding: 0; height: 38px; border: none; background: transparent; cursor: pointer;">
-							<input type="range" id="splitter_bg_opacity" min="0" max="100" value="0"
-								oninput="updateSplitterPreview()" style="flex: 1;" title="Opacity">
-							<span id="bg_opacity_display" class="small-text"
-								style="width: 40px; text-align: right;">0%</span>
-						</div>
-					</div>
+							<div class="input-group">
+								<label data-i18n="text_splitter.bg_color_opacity">Background Color & Opacity</label>
+								<div style="display: flex; gap: 10px; align-items: center;">
+									<input type="color" id="splitter_bg_color" value="#000000" oninput="updateSplitterPreview()"
+										style="width: 50px; padding: 0; height: 38px; border: none; background: transparent; cursor: pointer;">
+									<input type="range" id="splitter_bg_opacity" min="0" max="100" value="0"
+										oninput="updateSplitterPreview()" style="flex: 1;" title="Opacity">
+									<span id="bg_opacity_display" class="small-text"
+										style="width: 40px; text-align: right;">0%</span>
+								</div>
+							</div>
 
-					<div class="input-group">
-						<label for="splitter_scale" data-i18n="text_splitter.text_size_scale">Text Size Scale</label>
-						<div class="input-wrapper">
-							<input type="range" id="splitter_scale" min="0.1" max="5" step="0.1" value="1"
-								oninput="syncSplitterScale(this, 'range-scale')" style="flex: 1;">
-							<input type="number" id="splitter_scale_num" value="1" step="0.1"
-								oninput="syncSplitterScale(this, 'num-scale')" style="width: 50px;">
+							<div class="input-group">
+								<label data-i18n="text_splitter.font_style">Font Style</label>
+								<div class="font-style-buttons" style="margin-top: 4px;">
+									<button type="button" class="font-style-btn" id="splitter_bold" onclick="toggleFontStyle('bold')" title="Bold">
+										<strong>B</strong>
+									</button>
+									<button type="button" class="font-style-btn" id="splitter_italic" onclick="toggleFontStyle('italic')" title="Italic">
+										<em>I</em>
+									</button>
+								</div>
+							</div>
 						</div>
-					</div>
 
-					<div class="input-group">
-						<label for="splitter_x" data-i18n="text_splitter.x_position">X Position</label>
-						<div class="input-wrapper">
-							<input type="range" id="splitter_x" min="-500" max="500" value="0"
-								oninput="syncSplitterScale(this, 'range-x')" style="flex: 1;">
-							<input type="number" id="splitter_x_num" value="0"
-								oninput="syncSplitterScale(this, 'num-x')" style="width: 50px;">
-						</div>
-					</div>
+						<!-- Right Column -->
+						<div class="splitter-options-col">
+							<div class="input-group">
+								<label for="splitter_scale" data-i18n="text_splitter.text_size_scale">Text Size Scale</label>
+								<div class="input-wrapper">
+									<input type="range" id="splitter_scale" min="0" max="2" step="0.05" value="1"
+										oninput="syncSplitterScale(this, 'range-scale')" style="flex: 1;">
+									<input type="number" id="splitter_scale_num" value="1" step="0.05"
+										oninput="syncSplitterScale(this, 'num-scale')" style="width: 50px;">
+								</div>
+							</div>
 
-					<div class="input-group">
-						<label for="splitter_y" data-i18n="text_splitter.y_position">Y Position</label>
-						<div class="input-wrapper">
-							<input type="range" id="splitter_y" min="-500" max="500" value="0"
-								oninput="syncSplitterScale(this, 'range-y')" style="flex: 1;">
-							<input type="number" id="splitter_y_num" value="0"
-								oninput="syncSplitterScale(this, 'num-y')" style="width: 50px;">
-						</div>
-					</div>
+							<div class="input-group">
+								<label for="splitter_letter_spacing" data-i18n="text_splitter.letter_spacing">Letter Spacing</label>
+								<div class="input-wrapper">
+									<input type="range" id="splitter_letter_spacing" min="-100" max="100" step="1" value="0"
+										oninput="syncSplitterScale(this, 'range-ls')" style="flex: 1;">
+									<input type="number" id="splitter_letter_spacing_num" value="0" step="1"
+										oninput="syncSplitterScale(this, 'num-ls')" style="width: 50px;">
+								</div>
+							</div>
 
-					<div class="converter-row" style="display: flex; gap: 10px;">
-						<div style="flex: 1;">
-							<label for="splitter_zip_filename" data-i18n="text_splitter.zip_filename">ZIP
-								Filename</label>
-							<input type="text" id="splitter_zip_filename" placeholder="Ex: split_texts"
-								value="split_texts" data-i18n-placeholder="text_splitter.zip_filename_placeholder">
-						</div>
-						<div style="flex: 1;">
-							<label for="splitter_format" data-i18n="text_splitter.format">Format</label>
-							<select id="splitter_format">
-								<option value="image/png">PNG</option>
-								<option value="image/jpeg">JPG</option>
-								<option value="image/webp">WEBP</option>
-							</select>
+							<div class="input-group">
+								<label for="splitter_line_height" data-i18n="text_splitter.line_height">Line Height</label>
+								<div class="input-wrapper">
+									<input type="range" id="splitter_line_height" min="0.2" max="2.2" step="0.1" value="1.2"
+										oninput="syncSplitterScale(this, 'range-lh')" style="flex: 1;">
+									<input type="number" id="splitter_line_height_num" value="1.2" step="0.1"
+										oninput="syncSplitterScale(this, 'num-lh')" style="width: 50px;">
+								</div>
+							</div>
+
+							<div class="input-group">
+								<label for="splitter_x" data-i18n="text_splitter.x_position">X Position</label>
+								<div class="input-wrapper">
+									<input type="range" id="splitter_x" min="-500" max="500" value="0"
+										oninput="syncSplitterScale(this, 'range-x')" style="flex: 1;">
+									<input type="number" id="splitter_x_num" value="0"
+										oninput="syncSplitterScale(this, 'num-x')" style="width: 50px;">
+								</div>
+							</div>
+
+							<div class="input-group">
+								<label for="splitter_y" data-i18n="text_splitter.y_position">Y Position</label>
+								<div class="input-wrapper">
+									<input type="range" id="splitter_y" min="-500" max="500" value="0"
+										oninput="syncSplitterScale(this, 'range-y')" style="flex: 1;">
+									<input type="number" id="splitter_y_num" value="0"
+										oninput="syncSplitterScale(this, 'num-y')" style="width: 50px;">
+								</div>
+							</div>
+
+							<div class="converter-row" style="display: flex; gap: 10px;">
+								<div style="flex: 1;">
+									<label for="splitter_zip_filename" data-i18n="text_splitter.zip_filename">ZIP
+										Filename</label>
+									<input type="text" id="splitter_zip_filename" placeholder="Ex: split_texts"
+										value="split_texts" data-i18n-placeholder="text_splitter.zip_filename_placeholder">
+								</div>
+								<div style="flex: 1;">
+									<label for="splitter_format" data-i18n="text_splitter.format">Format</label>
+									<select id="splitter_format">
+										<option value="image/png">PNG</option>
+										<option value="image/jpeg">JPG</option>
+										<option value="image/webp">WEBP</option>
+									</select>
+								</div>
+							</div>
 						</div>
 					</div>
 

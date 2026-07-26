@@ -68,7 +68,10 @@ const TRANSLATIONS = {
             "status_generating": "Generating zip...",
             "status_ready": "Download ready!",
             "status_error": "Error generating zip.",
-            "error_font_load": "Font loading failed."
+            "error_font_load": "Font loading failed.",
+            "letter_spacing": "Letter Spacing",
+            "line_height": "Line Height",
+            "font_style": "Font Style"
         },
         "difficulty_info": {
             "title": "Difficulty Info",
@@ -151,7 +154,10 @@ const TRANSLATIONS = {
             "status_generating": "zip 생성 중...",
             "status_ready": "다운로드 준비 완료!",
             "status_error": "zip 생성 중 오류가 발생했습니다.",
-            "error_font_load": "폰트 로드에 실패했습니다."
+            "error_font_load": "폰트 로드에 실패했습니다.",
+            "letter_spacing": "자간",
+            "line_height": "행간",
+            "font_style": "폰트 스타일"
         },
         "difficulty_info": {
             "title": "난도 정보",
