@@ -170,5 +170,88 @@ const TRANSLATIONS = {
             "ok": "확인",
             "cancel": "취소"
         }
+    },
+    "cn": {
+        "nav": {
+            "star_calculator": "星型轨道计算器",
+            "level_converter": "TUF难度转换器",
+            "text_splitter": "文字图片生成器"
+        },
+        "star_calculator": {
+            "title": "星型计算器",
+            "help_content": "**⭐ 星型计算器**\n\n用于在 ADOFAI 中创建星型图案的工具。\n\n**📐 角度结果**\n按原样显示实际角度。\n按顺序将它们输入到关卡编辑器的角度输入字段中，即可完成星型形状。\n\n**📄 .adofai 结果**\n转换为适合 .adofai 文件中 angleData 格式的结果。\n复制结果，打开 .adofai 文件，将其粘贴到 angleData 中即可创建设定的星型。\n\n**❓ 公式**\n180 + (180 - 360 / **A**) / **B**\n\n• **A**：伪每圈数量\n• **B**：伪间隔",
+            "help_footer": "公式提供：Ceria（感谢！）",
+            "pseudo_per_round": "边数量",
+            "pseudo_interval": "轨道数量",
+            "pseudo_angle": "角度",
+            "angle_direction": "反向",
+            "outer_angle": "外角",
+            "inner_angle": "内角",
+            "angle_result": "角度结果",
+            "adofai_result": ".adofai 结果",
+            "visualization": "可视化",
+            "valid_numbers_error": "请输入有效数字。"
+        },
+        "level_converter": {
+            "title": "难度转换器",
+            "disclaimer": "ⓘ ADOFAI.gg 和 TUF 之间的难度评估标准存在差异，请仅作参考。",
+            "disclaimer_part1": " 和 ",
+            "disclaimer_part2": " 的难度评估标准不同，请仅作参考。",
+            "credits_tuf_part1": "© 2022-2024 由",
+            "credits_tuf_part2": "采用",
+            "credits_pgu": "PGU 图标素材致谢：Sean Lenard B.（@seanlenardb）",
+            "credits_gradient": "渐变色致谢：Sean Lenard B.（@seanlenardb）和 BadWolf（@badwolf_100）",
+            "credits_icons": "所有图标致谢：TEO（@TEO_72）",
+            "credits_extension": "渐变由非官方论坛提供，扩展由 TEO（@TEO_72）制作"
+        },
+        "text_splitter": {
+            "input_title": "输入",
+            "options_title": "选项",
+            "preview_title": "预览",
+            "enter_text": "输入文字",
+            "enter_text_placeholder": "例如：你好世界",
+            "input_btn": "输入 <span style='font-size: 0.65em; opacity: 0.7;'>(Ctrl+Enter)</span>",
+            "split_char": "按字符",
+            "split_word": "按词语",
+            "split_line": "按行",
+            "input_text_label": "输入文本",
+            "clear_all_tags": "清除所有标签",
+            "no_tags": "尚未添加标签。",
+            "width": "宽度",
+            "height": "高度",
+            "fit": "适配",
+            "filename_prefix": "文件名前缀：",
+            "filename_prefix_placeholder": "例如：1_",
+            "font_label": "字体（.ttf / .otf）",
+            "numbering_label": "使用顺序编号（1、2、3...）",
+            "select_font": "选择字体文件",
+            "no_font": "未选择字体",
+            "text_color_opacity": "文字颜色与不透明度",
+            "bg_color_opacity": "背景颜色与不透明度",
+            "text_size_scale": "文字大小缩放",
+            "x_position": "X 位置",
+            "y_position": "Y 位置",
+            "zip_filename": "压缩包文件名",
+            "zip_filename_placeholder": "例如：split_texts",
+            "format": "格式",
+            "generate_btn": "生成图片（.zip）",
+            "warning_clipped": "⚠️ {count} 个文字被裁剪！（点击查看）",
+            "confirm_clear": "确定要清除所有标签吗？",
+            "status_generating": "正在生成压缩包...",
+            "status_ready": "下载已就绪！",
+            "status_error": "生成压缩包出错。",
+            "error_font_load": "字体加载失败。"
+        },
+        "difficulty_info": {
+            "title": "难度信息",
+            "show_columns": "显示："
+        },
+        "modal": {
+            "confirm": "确认",
+            "yes": "是",
+            "no": "否",
+            "ok": "确定",
+            "cancel": "取消"
+        }
     }
 };
